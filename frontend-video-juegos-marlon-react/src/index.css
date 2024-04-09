@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-image: url('./Imagenes/Pley.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-position-y: 0px;
+  color: rgb(255, 255, 255);
+
+  /* Establecer un alto mínimo para asegurar que la imagen cubra completamente la pantalla */
+  min-height: 100vh;
+  /* Evitar que la imagen se encoga al minimizar la pantalla */
+  width: 100%;
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Agregar imágenes debajo del contenedor */
+#additional-images {
+  text-align: center;
+}
+
+#additional-images img {
+  width: 40%; /* Ajusta según sea necesario */
+  height: auto; /* Mantendrá la proporción de aspecto original de la imagen */
+  margin-top: 10px; /* Ajusta según sea necesario */
+}
