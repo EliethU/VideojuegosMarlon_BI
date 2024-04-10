@@ -530,6 +530,28 @@ router.put('/updateProducto/:id_producto', (req, res) => {
         });
     });
 
+    router.get('/productosPorCategoria', (req, res) => { 
+        const sql = `
+            SELECT
+            Categoria. NombreCategoria,
+            COUNT(Producto. IDProducto) AS CantidadProductos
+        FROM
+            Producto
+        INNER JOIN
+            Categoria ON Producto. IDCategoria Categoria. IDCategoria
+        GROUP BY
+            Categorla. IDCategoria
+    `;
+    db.query(sql, (err, result) => {   
+        if (err) {
+            console.error('Error al obtener la cantidad de productos por categoría:', err);
+            res.status(508).json({ error: 'Error al obtener la cantidad de productos por categoría' });
+        }   else {
+            res.status(208).json(result);
+          }
+        });
+    });
+        
 
 
     return router;

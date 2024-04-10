@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'; // Importación de React, useEffect y useState desde 'react'
 import Header from '../components/Header'; // Importación del componente Header desde la ruta '../components/Header'
-import { Button, Row, Col, Card, Container } from 'react-bootstrap';  // Importación de componentes específicos desde 'react-bootstrap'
+import { Button, Row, Col, Card, Container, CardBody } from 'react-bootstrap';  // Importación de componentes específicos desde 'react-bootstrap'
 import jsPDF from 'jspdf';  // Importación de jsPDF para la generación de documentos PDF
 import 'jspdf-autotable'; // Impotar una tabla
 import Chart from 'chart.js/auto';  // Importación de Chart.js para gráficos
@@ -95,6 +95,81 @@ function Estadisticas({Rol}) { // Declaración del componente Estadisticas con e
       .catch((error) => console.error('Error al obtener los productos:', error));
   };
 
+  //Apartado de estadistica de pastel
+
+  const [productosPorCategoria, setproductosPorCategoria] = useState([]);
+
+  useEffect(() => {
+    if (productosPorCategoria.length > 0) {
+      const ctx = document.getElementById('myCategories');
+
+      const labels = productosPorCategoria.map((categoria) => categoria.NombreCategoria); 
+      const data = productosPorCategoria.map((categoria) => categoria.CantidadProductos);
+
+      const chart = new Chart(ctx,{
+        type:'pie',
+        data: {
+          labels:labels,
+          datasets: [{
+            label:'Cantidad de productos por categoria',
+            data: data,
+            backgroundColor: [
+              'rgba(255,99,132,0.5)',
+              'rgba(54,162,235,0.5)',
+              'rgba(255,206,86,0.5)',
+              'rgba(75,192,192,0.5)',
+              'rgba(153,102,255,0.5)',
+              'rgba(255,159,64,0.5)'
+            ],
+            borderColor: [
+              'rgba(255,99,132,1)',
+              'rgba(54,162,235,1)',
+              'rgba(255,206,86,1)',
+              'rgba(75,192,192,1)',
+              'rgba(153,102,255,1)',
+              'rgba(255,159,64,1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive:true,
+          plugins:{
+            legend:{
+              position:'top'
+            },
+            title: {
+              display:true,
+              text:'Cantidad de productos por categoría'
+            }
+          }
+        }
+      });
+    }
+    
+  }, [productosPorCategoria]);
+  useEffect(()=> {
+    fetch('http://localhost:500/crud/productosPorCategoria')
+    .then((response) => response.json())
+    .then((data) => setproductosPorCategoria(data))
+    .catch((error) => console.error('Error al obtener los productos por categoria:', error));
+  }, []);
+  <Col sm="6" md="6" lg="12">
+        <Card>
+          <Card.Body>
+            <Card.Title>Productos por Categoria</Card.Title>
+            <canvas id="myCategories" height="120"></canvas>         
+          </Card.Body>
+
+          <Card.Body>
+            <Button onClick={generarReporteAlmacen}>
+              Generar PDF
+            </Button>
+          </Card.Body>
+        </Card>
+  </Col>
+
+
   // Definición de la función generarReporteAlmacenImg como una función asíncrona
 const generarReporteAlmacenImg = async () => {
   try {
@@ -162,6 +237,7 @@ const generarReporteAlmacenImg = async () => {
 
           </Card>
         </Col>
+      
 
         </Row>
       </Container>
