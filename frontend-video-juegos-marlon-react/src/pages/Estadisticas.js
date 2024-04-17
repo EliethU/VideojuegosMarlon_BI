@@ -13,6 +13,8 @@ function Estadisticas({Rol}) { // Declaración del componente Estadisticas con e
 
   const [productos, setProductos] = useState([]);  // Declaración del estado 'productos' y su función 'setProductos' a través de useState, con un valor inicial de un array vacío
   const [myChart, setMyChart] = useState(null);  // Declaración del estado 'myChart' y su función 'setMyChart' a través de useState, con un valor inicial de 'null'
+  const [categoryChart, setCategoryChart] = useState(null);
+  const [productosPorCategoria, setProductosPorCategoria] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:5000/crud/readproducto')  // Realiza una solicitud GET al servidor para obtener productos
@@ -95,18 +97,55 @@ function Estadisticas({Rol}) { // Declaración del componente Estadisticas con e
       .catch((error) => console.error('Error al obtener los productos:', error));
   };
 
-  //Apartado de estadistica de pastel
+    // Definición de la función generarReporteAlmacenImg como una función asíncrona
+const generarReporteAlmacenImg = async () => {
+  try {
+    // Utiliza html2canvas para capturar el contenido del elemento con el ID 'myChart' y obtener un objeto canvas
+    const canvas = await html2canvas(document.getElementById('myChart'));
+    // Crea un nuevo objeto jsPDF para trabajar con documentos PDF
+    const pdf = new jsPDF();
+    // Convierte el objeto canvas a una URL de datos en formato PNG
+    const imgData = canvas.toDataURL('image/png');
+    // Añade un texto al documento PDF
+    pdf.text("Reporte de Estado de Almacén", 67, 10);
+    // Añade la imagen capturada del gráfico al documento PDF, con ajustes de coordenadas y tamaño
+    
+    // Calcula las coordenadas para centrar la imagen en la página
+    const pageWidth = pdf.internal.pageSize.width;
+    const imgWidth = 100; // Ancho deseado de la imagen
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Calcula la altura proporcional
+    const xPos = (pageWidth - imgWidth) / 2; // Calcula la posición X para centrar    
+    // Añade la imagen capturada del gráfico al documento PDF, con ajustes de coordenadas y tamaño
+    pdf.addImage(imgData, xPos, 20, imgWidth, imgHeight);
 
-  const [productosPorCategoria, setproductosPorCategoria] = useState([]);
+    // Guarda el documento PDF con un nombre específico
+    pdf.save("reporte_almacen_con_grafico.pdf");
+  } catch (error) {
+    // Captura y maneja cualquier error que pueda ocurrir durante la ejecución del bloque try
+    console.error('Error al generar el reporte con imagen:', error);
+  }
+};
+
+  //Apartado de estadistica de pastel
+  useEffect(()=> {
+    fetch('http://localhost:5000/crud/productosPorCategoria')
+    .then((response) => response.json())
+    .then((data) => setProductosPorCategoria(data))
+    .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
+  }, []);
 
   useEffect(() => {
     if (productosPorCategoria.length > 0) {
       const ctx = document.getElementById('myCategories');
 
-      const labels = productosPorCategoria.map((categoria) => categoria.NombreCategoria); 
-      const data = productosPorCategoria.map((categoria) => categoria.CantidadProductos);
+      if (categoryChart !== null) {
+        categoryChart.destroy();  // Destruye el gráfico existente antes de crear uno nuevo para evitar conflictos
+      }
 
-      const chart = new Chart(ctx,{
+      const labels = productosPorCategoria.map((Categoria) => Categoria.nombre); 
+      const data = productosPorCategoria.map((Categoria) => Categoria.cantidadproducto);
+
+      const categorias = new Chart(ctx,{
         type:'pie',
         data: {
           labels:labels,
@@ -136,7 +175,7 @@ function Estadisticas({Rol}) { // Declaración del componente Estadisticas con e
           responsive:true,
           plugins:{
             legend:{
-              position:'top'
+              position:'top',
             },
             title: {
               display:true,
@@ -145,59 +184,11 @@ function Estadisticas({Rol}) { // Declaración del componente Estadisticas con e
           }
         }
       });
+      setCategoryChart(categorias); // Guarda la referencia al nuevo gráfico en el estado
     }
     
   }, [productosPorCategoria]);
-  useEffect(()=> {
-    fetch('http://localhost:500/crud/productosPorCategoria')
-    .then((response) => response.json())
-    .then((data) => setproductosPorCategoria(data))
-    .catch((error) => console.error('Error al obtener los productos por categoria:', error));
-  }, []);
-  <Col sm="6" md="6" lg="12">
-        <Card>
-          <Card.Body>
-            <Card.Title>Productos por Categoria</Card.Title>
-            <canvas id="myCategories" height="120"></canvas>         
-          </Card.Body>
 
-          <Card.Body>
-            <Button onClick={generarReporteAlmacen}>
-              Generar PDF
-            </Button>
-          </Card.Body>
-        </Card>
-  </Col>
-
-
-  // Definición de la función generarReporteAlmacenImg como una función asíncrona
-const generarReporteAlmacenImg = async () => {
-  try {
-    // Utiliza html2canvas para capturar el contenido del elemento con el ID 'myChart' y obtener un objeto canvas
-    const canvas = await html2canvas(document.getElementById('myChart'));
-    // Crea un nuevo objeto jsPDF para trabajar con documentos PDF
-    const pdf = new jsPDF();
-    // Convierte el objeto canvas a una URL de datos en formato PNG
-    const imgData = canvas.toDataURL('image/png');
-    // Añade un texto al documento PDF
-    pdf.text("Reporte de Estado de Almacén", 67, 10);
-    // Añade la imagen capturada del gráfico al documento PDF, con ajustes de coordenadas y tamaño
-    
-    // Calcula las coordenadas para centrar la imagen en la página
-    const pageWidth = pdf.internal.pageSize.width;
-    const imgWidth = 100; // Ancho deseado de la imagen
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Calcula la altura proporcional
-    const xPos = (pageWidth - imgWidth) / 2; // Calcula la posición X para centrar    
-    // Añade la imagen capturada del gráfico al documento PDF, con ajustes de coordenadas y tamaño
-    pdf.addImage(imgData, xPos, 20, imgWidth, imgHeight);
-
-    // Guarda el documento PDF con un nombre específico
-    pdf.save("reporte_almacen_con_grafico.pdf");
-  } catch (error) {
-    // Captura y maneja cualquier error que pueda ocurrir durante la ejecución del bloque try
-    console.error('Error al generar el reporte con imagen:', error);
-  }
-};
 
   return(
     <div>
@@ -237,6 +228,21 @@ const generarReporteAlmacenImg = async () => {
 
           </Card>
         </Col>
+
+        <Col sm="6" md="6" lg="6">
+        <Card>
+          <Card.Body>
+            <Card.Title>Productos por Categorìa</Card.Title>
+            <canvas id="myCategories" height="120"></canvas>         
+          </Card.Body>
+
+          <Card.Body>
+            <Button onClick={generarReporteAlmacen}>
+              Generar PDF
+            </Button>
+          </Card.Body>
+        </Card>
+  </Col>
       
 
         </Row>

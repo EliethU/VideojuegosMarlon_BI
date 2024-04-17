@@ -533,14 +533,14 @@ router.put('/updateProducto/:id_producto', (req, res) => {
     router.get('/productosPorCategoria', (req, res) => { 
         const sql = `
             SELECT
-            Categoria. NombreCategoria,
-            COUNT(Producto. IDProducto) AS CantidadProductos
+            Categoria.nombre,
+            COUNT(Producto.id_producto) AS cantidadproducto
         FROM
             Producto
         INNER JOIN
-            Categoria ON Producto. IDCategoria Categoria. IDCategoria
+            Categoria ON Producto.id_categoria = Categoria.id_categoria
         GROUP BY
-            Categorla. IDCategoria
+            Categoria.id_categoria
     `;
     db.query(sql, (err, result) => {   
         if (err) {
