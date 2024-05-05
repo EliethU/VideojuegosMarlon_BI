@@ -9,7 +9,9 @@ CREATE TABLE Usuario (
   contraseña VARCHAR(8) NOT NULL,
   Rol VARCHAR(20) NOT NULL
 );
-
+select * from usuario;
+INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
+VALUES ('Josnel', '202322', 'administrador');
  /* Tabla de Clientes */
 CREATE TABLE Cliente (
  id_cliente INT NOT NULL AUTO_INCREMENT,
@@ -26,7 +28,7 @@ CREATE TABLE Categoria(
     id_categoria INT NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(30) NOT NULL,
     PRIMARY KEY (id_categoria)
- );
+ );  
 
 /* Tabla de Productos */
 CREATE TABLE Producto(

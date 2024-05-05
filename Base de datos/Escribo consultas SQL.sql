@@ -3,6 +3,7 @@
 /*Crear un nuevo usuario*/
 INSERT INTO Usuario (nombre_Usuario, apellido, contraseña, Rol)
 VALUES ('Mauricio', 'Rubio', '202322', 'administrador');
+VALUES ('Josnel', 'Lopez', '202322', 'administrador');
 
 /*Crear un nuevo cliente*/
 INSERT INTO Cliente (nombre, apellido, telefono)

@@ -124,6 +124,8 @@ const generarReporteAlmacenImg = async () => {
     // Captura y maneja cualquier error que pueda ocurrir durante la ejecución del bloque try
     console.error('Error al generar el reporte con imagen:', error);
   }
+
+  
 };
 
   //Apartado de estadistica de pastel
