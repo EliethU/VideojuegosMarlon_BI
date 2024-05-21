@@ -2,22 +2,12 @@ CREATE DATABASE videojuegosmarlon_DM;
 
 USE videojuegosmarlon_DM;
 
-CREATE TABLE Hechos_Ventas (
-  id_ventas int primary key,
-  id_producto int,
-  id_tiempo int,
-  id_cliente int,
-  cantidad int, 
-  total int
-);
-
 CREATE TABLE Dim_Tiempo (
   id_tiempo INT PRIMARY KEY,
-  fecha date,
-  anyo VARCHAR(8),
-  mes VARCHAR(20),
-  dia INT,
-  hora int
+  fecha DATE,
+  anyo INT,
+  mes INT,
+  dia INT
 );
 
 CREATE TABLE Dim_Cliente (
@@ -29,15 +19,27 @@ CREATE TABLE Dim_Cliente (
 
 CREATE TABLE Dim_Producto (
   id_producto INT PRIMARY KEY,
-  nombreProducto varchar(30),
+  nombreProducto VARCHAR(30),
   precio INT,
-  categoria varchar(30),
-  descripcion varchar(100),
-  cantidad int
+  nombre VARCHAR (30),
+  descripcion VARCHAR(100)
 );
 
-ALTER TABLE Hechos_Ventas ADD FOREIGN KEY (id_tiempo) REFERENCES Dim_Tiempo (id_tiempo);
+CREATE TABLE Hechos_Ventas (
+  id_hventas INT PRIMARY KEY,
+  id_venta INT ,
+  id_producto INT,
+  id_tiempo INT,
+  id_cliente INT,
+  cantidad INT,
+  precio_unitario INT,
+  total_venta INT,
+  FOREIGN KEY (id_tiempo) REFERENCES Dim_Tiempo(id_tiempo),
+  FOREIGN KEY (id_producto) REFERENCES Dim_Producto(id_producto),
+  FOREIGN KEY (id_cliente) REFERENCES Dim_Cliente(id_cliente)
+);
 
-ALTER TABLE Hechos_Ventas ADD FOREIGN KEY (id_producto) REFERENCES Dim_Producto (id_producto);
-
-ALTER TABLE Hechos_Ventas ADD FOREIGN KEY (id_cliente) REFERENCES Dim_Cliente (id_cliente);
+SELECT * FROM dim_tiempo;
+SELECT * FROM dim_cliente;
+SELECT * FROM dim_producto;
+SELECT * FROM hechos_ventas;

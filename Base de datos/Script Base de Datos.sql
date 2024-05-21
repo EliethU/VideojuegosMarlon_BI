@@ -73,3 +73,14 @@ CREATE TABLE Bitacora (
     tabla VARCHAR(20) NOT NULL,
     PRIMARY KEY (id_bitacora)
 );
+
+INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
+VALUES ('Josnel', '202322', 'administrador');
+
+INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
+VALUES ('Elieth', '202322', 'administrador');
+
+SELECT * FROM Venta;
+SELECT * FROM detalle;
+SELECT * FROM Producto;
+SELECT * FROM cliente;
