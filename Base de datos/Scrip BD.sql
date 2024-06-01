@@ -9,9 +9,17 @@ CREATE TABLE Usuario (
   contraseña VARCHAR(8) NOT NULL,
   Rol VARCHAR(20) NOT NULL
 );
-select * from usuario;
+
+SELECT * FROM Producto;
+SELECT * FROM cliente;
+
 INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
 VALUES ('Josnel', '202322', 'administrador');
+
+INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
+VALUES ('Elieth', '202322', 'administrador');
+
+
  /* Tabla de Clientes */
 CREATE TABLE Cliente (
  id_cliente INT NOT NULL AUTO_INCREMENT,
@@ -73,3 +81,23 @@ CREATE TABLE Bitacora (
     tabla VARCHAR(20) NOT NULL,
     PRIMARY KEY (id_bitacora)
 );
+
+/*Inserciones de prueba*/
+INSERT INTO Detalle (id_detalle, id_venta, id_producto, cantidad)
+VALUES (4, 3, 2, 5);
+INSERT INTO Venta (id_venta,id_cliente,fecha)
+VALUES (4,2,'2023-02-03');
+
+SELECT * FROM Venta;
+SELECT * FROM detalle;
+
+SELECT 
+    DATE_FORMAT(V.fecha, '%Y-%m') AS Mes, 
+    SUM(D.cantidad * P.precio) AS IngresosTotales 
+FROM 
+    Venta V 
+    JOIN Detalle D ON V.id_venta = D.id_venta 
+    JOIN Producto P ON D.id_producto = P.id_producto 
+GROUP BY 
+    DATE_FORMAT(V.fecha, '%Y-%m');
+ 

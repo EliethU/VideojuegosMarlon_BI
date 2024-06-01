@@ -24,6 +24,22 @@ db.connect((err) => {
     }
 });
 
+// Configuración de la conexión a la segunda base de datos
+const db2 = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'mysql2023',
+    database: 'videojuegosmarlon_DM'
+});
+
+db2.connect((err) => {
+    if (err) {
+        console.error('Error de conexión a la segunda base de datos:', err);
+    } else {
+        console.log('Conexión exitosa a la segunda base de datos');
+    }
+});
+
 // Configuración de CORS
 app.use(cors());
 
