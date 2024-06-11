@@ -16,6 +16,7 @@ import Login from './pages/Login';
 import Estadisticas from './pages/Estadisticas';
 import Galeria from './pages/Galeria';
 import SinAcceso from './pages/SinAcceso';
+import Reporte from './pages/Reporte';
 
 function App() {
   const storedRol = localStorage.getItem('userRol');
@@ -44,6 +45,7 @@ function App() {
         <Route path="/Venta" element={userRol ? <Venta Rol={userRol} /> : <Navigate to="/sin-acceso" />}/>
         <Route path="/VentaList" element={userRol ? <VentaList Rol={userRol} /> : <Navigate to="/sin-acceso" />}/>
         <Route path="/estadisticas" element={userRol ? <Estadisticas Rol={userRol} /> : <Navigate to="/sin-acceso" />}/>
+        <Route path="/Reporte" element={userRol ? <Reporte Rol={userRol} /> : <Navigate to="/sin-acceso" />}/>
         <Route path="/sin-acceso" element={<SinAcceso />}/>
       </Routes>
     </Router>

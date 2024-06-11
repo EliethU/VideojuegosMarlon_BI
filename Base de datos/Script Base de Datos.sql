@@ -82,6 +82,7 @@ CREATE TABLE Bitacora (
     PRIMARY KEY (id_bitacora)
 );
 
+
 /*Inserciones de prueba*/
 INSERT INTO Detalle (id_detalle, id_venta, id_producto, cantidad)
 VALUES (4, 3, 2, 5);
@@ -100,14 +101,15 @@ FROM
     JOIN Producto P ON D.id_producto = P.id_producto 
 GROUP BY 
     DATE_FORMAT(V.fecha, '%Y-%m');
-    
-    
-    SELECT 
-    P.nombreProducto, 
-    SUM(D.cantidad * P.precio) AS IngresosPorProducto 
-FROM 
-    Detalle D 
-    JOIN Producto P ON D.id_producto = P.id_producto 
-GROUP BY 
-    P.nombreProducto;
  
+INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
+VALUES ('Josnel', '202322', 'administrador');
+
+INSERT INTO Usuario (nombre_Usuario, contraseña, Rol)
+VALUES ('Elieth', '202322', 'administrador');
+
+SELECT * FROM Venta;
+SELECT * FROM detalle;
+SELECT * FROM Producto;
+SELECT * FROM cliente;
+

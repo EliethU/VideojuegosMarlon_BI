@@ -85,6 +85,10 @@ GROUP BY
 ORDER BY 
     Ventas_Totales DESC;
     
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 17cac36e1f5e85191a87c6bb80b8a38e49e7a514
 -- Promedio de ventas por producto:    
 SELECT 
     p.nombreProducto,
@@ -130,3 +134,52 @@ GROUP BY
 ORDER BY 
     Cantidad_Total_Vendida DESC
 LIMIT 5;
+<<<<<<< HEAD
+=======
+
+
+/*Ingresos Totales Mensuales*/
+SELECT 
+    CONCAT(DT.anyo, '-', LPAD(DT.mes, 2, '0')) AS Mes, 
+    SUM(HV.total_venta) AS IngresosTotales 
+FROM 
+    Hechos_Ventas HV
+    JOIN Dim_Tiempo DT ON HV.id_tiempo = DT.id_tiempo
+GROUP BY 
+    DT.anyo, DT.mes;
+    
+   
+  /*Ingresos por producto*/ 
+SELECT 
+    DP.nombreProducto, 
+    SUM(HV.total_venta) AS IngresosPorProducto 
+FROM 
+    Hechos_Ventas HV 
+    JOIN Dim_Producto DP ON HV.id_producto = DP.id_producto 
+GROUP BY 
+    DP.nombreProducto;
+    
+ 
+/*Frecuencia de Uso por Cliente*/
+SELECT 
+    DC.id_cliente, 
+    COUNT(HV.id_venta) AS FrecuenciaUso 
+FROM 
+    Dim_Cliente DC 
+    JOIN Hechos_Ventas HV ON DC.id_cliente = HV.id_cliente 
+GROUP BY 
+    DC.id_cliente;
+
+
+/*Productos/Servicios más Populares*/
+SELECT 
+    DP.nombreProducto, 
+    SUM(HV.cantidad) AS TotalCantidad 
+FROM 
+    Hechos_Ventas HV 
+    JOIN Dim_Producto DP ON HV.id_producto = DP.id_producto 
+GROUP BY 
+    DP.nombreProducto 
+ORDER BY 
+    TotalCantidad DESC;
+

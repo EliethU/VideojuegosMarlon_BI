@@ -200,7 +200,7 @@ const generarReporteAlmacenImg = async () => {
 
       <Row className="g-3">
 
-      <Col sm={{ span: 6, offset: 3 }} md={{ span: 6, offset: 3 }} lg={{ span: 4, offset: 4 }}>
+      <Col sm="12" md="12" lg="12">
             <Card>
               <Card.Body>
                 <Card.Title>Estado del almacén</Card.Title>
@@ -215,12 +215,14 @@ const generarReporteAlmacenImg = async () => {
               </Card>
           </Col>
 
-        <Col sm={{ span: 6, offset: 3 }} md={{ span: 6, offset: 3 }} lg={{ span: 4, offset: 4 }}>
+        <Col sm="6" md="6" lg="6">
           <Card>
             <Card.Body>
               <Card.Title>Estado del almacén</Card.Title>
               <canvas id="myChart"  height="300"></canvas>
             </Card.Body>
+
+            
 
             <Card.Body>
               <Button onClick={generarReporteAlmacen}>
@@ -240,7 +242,7 @@ const generarReporteAlmacenImg = async () => {
 
           <Card.Body>
             <Button onClick={generarReporteAlmacen}>
-              Generar PDF
+              Generar reporte
             </Button>
           </Card.Body>
         </Card>

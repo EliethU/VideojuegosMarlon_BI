@@ -100,6 +100,10 @@ function Header({ Rol }) {
                     <Link to="/estadisticas" className="link-unstyled">Estadísticas</Link>
                 </Nav.Link>
 
+                <Nav.Link>
+                    <Link to="/reporte" className="link-unstyled">Reporte</Link>
+                </Nav.Link>
+
                 <Nav.Link onClick={cerrarSesion}>
                     <Link to="/" className="link-unstyled"><FaRightFromBracket /></Link>
                 </Nav.Link>

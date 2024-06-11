@@ -29,7 +29,10 @@ const db2 = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'mysql2023',
-    database: 'videojuegosmarlon_DM'
+    database: 'videojuegosmarlon_DM',
+    password: 'mysql2023',
+    database: 'videojuegosmarlon_dm'
+
 });
 
 db2.connect((err) => {
@@ -46,6 +49,10 @@ app.use(cors());
 // inportar y usar rutas CRUD
 const crudRoutes = require('./routes/crudRoutes')(db); // Pasa la instancia de la base de datos a crudRoutes
 app.use('/crud', crudRoutes);
+
+// Importar y usar rutas para la segunda base de datos
+const estadisticasDb2 = require('./routes/estadisticas')(db2); // Pasa la instancia de la segunda base de datos a crudRoutesDb2
+app.use('/estadisticas', estadisticasDb2);
 
 // Manejador de errores
 app.use((err, req, res, next) => {
