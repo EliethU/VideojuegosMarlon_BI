@@ -1,139 +1,73 @@
-import React, { useEffect, useState } from 'react'; // Importación de React, useEffect y useState desde 'react'
-import Header from '../components/Header'; // Importación del componente Header desde la ruta '../components/Header'
-import { Button, Row, Col, Card, Container, CardBody } from 'react-bootstrap';  // Importación de componentes específicos desde 'react-bootstrap'
-import jsPDF from 'jspdf';  // Importación de jsPDF para la generación de documentos PDF
-import 'jspdf-autotable'; // Impotar una tabla
-import Chart from 'chart.js/auto';  // Importación de Chart.js para gráficos
-import '../styles/App.css'; // Importación de estilos CSS desde '../styles/App.css'
+import React, { useEffect, useState } from 'react';
+import Header from '../components/Header';
+import { Button, Row, Col, Card } from 'react-bootstrap';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import Chart from 'chart.js/auto';
+import '../styles/App.css';
 import Footer from '../components/Footer';
-// Importa la biblioteca html2canvas, que proporciona funciones para capturar y convertir el contenido HTML, incluidos elementos del DOM, en imágenes de lienzo (canvas).
 import html2canvas from 'html2canvas';
 
-function Estadisticas({Rol}) { // Declaración del componente Estadisticas con el argumento 'rol' 
+function Estadisticas({ Rol }) {
 
-  const [productos, setProductos] = useState([]);  // Declaración del estado 'productos' y su función 'setProductos' a través de useState, con un valor inicial de un array vacío
-  const [myChart, setMyChart] = useState(null);  // Declaración del estado 'myChart' y su función 'setMyChart' a través de useState, con un valor inicial de 'null'
+  const [productos, setProductos] = useState([]);
+  const [myChart, setMyChart] = useState(null);
   const [categoryChart, setCategoryChart] = useState(null);
   const [productosPorCategoria, setProductosPorCategoria] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/crud/readproducto')  // Realiza una solicitud GET al servidor para obtener productos
-      .then((response) => response.json())  // Convierte la respuesta a formato JSON
-      .then((data) => setProductos(data))  // Almacena los productos en el estado 'productos'
-      .catch((error) => console.error('Error al obtener los productos:', error));  // Manejo de errores en caso de fallar la solicitud
-  }, []);  // Se ejecuta esta función solo una vez al cargar el componente
+    fetch('http://localhost:5000/crud/readproducto')
+      .then((response) => response.json())
+      .then((data) => setProductos(data))
+      .catch((error) => console.error('Error al obtener los productos:', error));
+  }, []);
 
   useEffect(() => {
-    if (productos.length > 0) { // Si hay productos disponibles
-      const ctx = document.getElementById('myChart'); // Obtiene el elemento canvas con el ID 'myChart'
-  
+    if (productos.length > 0) {
+      const ctx = document.getElementById('myChart');
+
       if (myChart !== null) {
-        myChart.destroy();  // Destruye el gráfico existente antes de crear uno nuevo para evitar conflictos
+        myChart.destroy();
       }
-  
-      const nombresProductos = productos.map((producto) => producto.nombreProducto); // Extrae los nombres de los productos
-      const stokcs = productos.map((producto) => producto.Stock); // Extrae las cantidades de los productos
-  
+
+      const nombresProductos = productos.map((producto) => producto.nombreProducto);
+      const stokcs = productos.map((producto) => producto.Stock);
+
       const dynamicColors = stokcs.map(() => {
-        // Genera colores dinámicamente para cada barra
         const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.5)`;
         return randomColor;
       });
-  
-      const almacen = new Chart(ctx, { // Crea un nuevo gráfico de tipo 'bar' con Chart.js y lo asigna al elemento canvas
+
+      const almacen = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: nombresProductos,   // Asigna los nombres de productos como etiquetas para el eje X
+          labels: nombresProductos,
           datasets: [{
-            label: 'Cantidad disponible',   // Etiqueta para la leyenda del gráfico
-            data: stokcs,  // Asigna las cantidades de productos para la visualización
-            backgroundColor: dynamicColors,   // Define los colores dinamicos de las barras
-            borderColor: dynamicColors.map(color => color.replace('0.5', '1')), // Ajusta la opacidad del borde
-            borderWidth: 1  // Define el ancho del borde de las barras
+            label: 'Cantidad disponible',
+            data: stokcs,
+            backgroundColor: dynamicColors,
+            borderColor: dynamicColors.map(color => color.replace('0.5', '1')),
+            borderWidth: 1
           }]
         },
         options: {
           scales: {
             y: {
-              beginAtZero: true  // Comienza el eje Y desde cero
+              beginAtZero: true
             }
           }
         }
       });
-  
-      setMyChart(almacen); // Guarda la referencia al nuevo gráfico en el estado
+
+      setMyChart(almacen);
     }
-  }, [productos]);  // Se ejecuta cada vez que hay cambios en 'productos'
+  }, [productos]);
 
-  const generarReporteAlmacen = () => {
-    fetch('http://localhost:5000/crud/readproducto')  // Realiza una solicitud GET al servidor para obtener productos
-      .then((response) => response.json())  // Convierte la respuesta a formato JSON
-      .then((productos) => {
-        const doc = new jsPDF();  // Crea un nuevo documento PDF con jsPDF
-
-        doc.setTextColor(128, 0, 128);
-        doc.text("Reporte de Estado de Almacén", 20, 15);  // Agrega un título al documento PDF
-        doc.setTextColor(0, 0, 0);
-
-        const columns = ["Nombre", "Cantidad"];
-        const rows = productos.map((producto) => [producto.nombreProducto, producto.Stock]);
-  
-        // Configura el color de las líneas antes de la generación de la tabla
-        doc.setDrawColor(0); // 0 representa negro
-
-        doc.autoTable({
-          head: [columns],
-          body: rows,
-          startY: 25,
-          margin: { top: 15 },
-          styles: {
-           lineColor: [0, 0, 0], // Establecer el color de las líneas a negro
-           lineWidth: 0.5,       // Establecer el ancho de las líneas
-          },
-        });
-  
-        doc.save("reporte_almacen.pdf");
-      })
-      .catch((error) => console.error('Error al obtener los productos:', error));
-  };
-
-    // Definición de la función generarReporteAlmacenImg como una función asíncrona
-const generarReporteAlmacenImg = async () => {
-  try {
-    // Utiliza html2canvas para capturar el contenido del elemento con el ID 'myChart' y obtener un objeto canvas
-    const canvas = await html2canvas(document.getElementById('myChart'));
-    // Crea un nuevo objeto jsPDF para trabajar con documentos PDF
-    const pdf = new jsPDF();
-    // Convierte el objeto canvas a una URL de datos en formato PNG
-    const imgData = canvas.toDataURL('image/png');
-    // Añade un texto al documento PDF
-    pdf.text("Reporte de Estado de Almacén", 67, 10);
-    // Añade la imagen capturada del gráfico al documento PDF, con ajustes de coordenadas y tamaño
-    
-    // Calcula las coordenadas para centrar la imagen en la página
-    const pageWidth = pdf.internal.pageSize.width;
-    const imgWidth = 100; // Ancho deseado de la imagen
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Calcula la altura proporcional
-    const xPos = (pageWidth - imgWidth) / 2; // Calcula la posición X para centrar    
-    // Añade la imagen capturada del gráfico al documento PDF, con ajustes de coordenadas y tamaño
-    pdf.addImage(imgData, xPos, 20, imgWidth, imgHeight);
-
-    // Guarda el documento PDF con un nombre específico
-    pdf.save("reporte_almacen_con_grafico.pdf");
-  } catch (error) {
-    // Captura y maneja cualquier error que pueda ocurrir durante la ejecución del bloque try
-    console.error('Error al generar el reporte con imagen:', error);
-  }
-
-  
-};
-
-  //Apartado de estadistica de pastel
-  useEffect(()=> {
+  useEffect(() => {
     fetch('http://localhost:5000/crud/productosPorCategoria')
-    .then((response) => response.json())
-    .then((data) => setProductosPorCategoria(data))
-    .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
+      .then((response) => response.json())
+      .then((data) => setProductosPorCategoria(data))
+      .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
   }, []);
 
   useEffect(() => {
@@ -141,18 +75,18 @@ const generarReporteAlmacenImg = async () => {
       const ctx = document.getElementById('myCategories');
 
       if (categoryChart !== null) {
-        categoryChart.destroy();  // Destruye el gráfico existente antes de crear uno nuevo para evitar conflictos
+        categoryChart.destroy();
       }
 
-      const labels = productosPorCategoria.map((Categoria) => Categoria.nombre); 
+      const labels = productosPorCategoria.map((Categoria) => Categoria.nombre);
       const data = productosPorCategoria.map((Categoria) => Categoria.cantidadproducto);
 
-      const categorias = new Chart(ctx,{
-        type:'pie',
+      const categorias = new Chart(ctx, {
+        type: 'pie',
         data: {
-          labels:labels,
+          labels: labels,
           datasets: [{
-            label:'Cantidad de productos por categoria',
+            label: 'Cantidad de productos por categoria',
             data: data,
             backgroundColor: [
               'rgba(255,99,132,0.5)',
@@ -174,86 +108,116 @@ const generarReporteAlmacenImg = async () => {
           }]
         },
         options: {
-          responsive:true,
-          plugins:{
-            legend:{
-              position:'top',
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
             },
             title: {
-              display:true,
-              text:'Cantidad de productos por categoría'
+              display: true,
+              text: 'Cantidad de productos por categoría'
             }
           }
         }
       });
-      setCategoryChart(categorias); // Guarda la referencia al nuevo gráfico en el estado
+      setCategoryChart(categorias);
     }
-    
   }, [productosPorCategoria]);
 
+  
+  const generarReportePie = async () => {
+    try {
+      const canvas = await html2canvas(document.getElementById('myCategories'));
+      const imgData = canvas.toDataURL('image/png');
 
-  return(
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, 'PNG', 10, 10);
+      pdf.save('reporte_pastel.pdf');
+    } catch (error) {
+      console.error('Error al generar el reporte del gráfico de pie:', error);
+    }
+  };
+
+  const generarReporteCompleto = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/crud/readproducto');
+      const productos = await response.json();
+
+      const pdf = new jsPDF();
+      pdf.setTextColor(128, 0, 128);
+      pdf.text("Reporte del Estado de Almacén", 20, 15);
+      pdf.setTextColor(0, 0, 0);
+
+      const columns = ["Nombre", "Cantidad"];
+      const rows = productos.map((producto) => [producto.nombreProducto, producto.Stock]);
+
+      pdf.autoTable({
+        head: [columns],
+        body: rows,
+        startY: 25,
+        margin: { top: 15 },
+        styles: {
+          lineColor: [0, 0, 0],
+          lineWidth: 0.5,
+        },
+      });
+
+    
+      const canvas = await html2canvas(document.getElementById('myChart'));
+      const imgData = canvas.toDataURL('image/png');
+      const pageWidth = pdf.internal.pageSize.width;
+      const imgWidth = pageWidth - 40; // Ajusta el ancho de la imagen
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const xPos = 20; // Ajusta la posición X
+
+      pdf.addPage();
+      pdf.addImage(imgData, xPos, 20, imgWidth, imgHeight);
+
+      pdf.save("reporte_almacen_completo.pdf");
+    } catch (error) {
+      console.error('Error al generar el reporte completo:', error);
+    }
+  };
+
+  return (
     <div>
-      <Header Rol={ Rol } />
-
-      <Container className="margen-contenedor text-center">
-
-      <Row className="g-3">
-
-      <Col sm="12" md="12" lg="12">
-            <Card>
-              <Card.Body>
-                <Card.Title>Estado del almacén</Card.Title>
-              </Card.Body>
-
-              <Card.Body>
-                <Button onClick={generarReporteAlmacenImg}>
-                  Generar reporte con imagen
-                </Button>
-              </Card.Body>
-
-              </Card>
-          </Col>
-
-        <Col sm="6" md="6" lg="6">
+      <Header Rol={Rol} />
+      <Row className="margen-contenedor text-center g-3">
+        <Col sm="6" md="6" lg="12">
           <Card>
             <Card.Body>
               <Card.Title>Estado del almacén</Card.Title>
-              <canvas id="myChart"  height="300"></canvas>
             </Card.Body>
-
-            
-
-            <Card.Body>
-              <Button onClick={generarReporteAlmacen}>
-                Generar reporte
-              </Button>
-            </Card.Body>
-
           </Card>
         </Col>
 
-        <Col sm="6" md="6" lg="6">
-        <Card>
-          <Card.Body>
-            <Card.Title>Productos por Categorìa</Card.Title>
-            <canvas id="myCategories" height="120"></canvas>         
-          </Card.Body>
+        <Col sm="12" md="12" lg="6">
+          <Card>
+            <Card.Body>
+              <Card.Title>Estado del almacén</Card.Title>
+              <canvas id="myChart" height="300"></canvas>
+              <Button onClick={generarReporteCompleto} className="mt-3">
+                Generar reporte completo
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
 
-          <Card.Body>
-            <Button onClick={generarReporteAlmacen}>
-              Generar reporte
-            </Button>
-          </Card.Body>
-        </Card>
-  </Col>
-      
 
-        </Row>
-      </Container>
-
+        <Col sm="12" md="12" lg="6">
+          <Card>
+            <Card.Body>
+              <Card.Title>Productos por Categoría</Card.Title>
+              <canvas id="myCategories" height="120"></canvas>
+              <Button onClick={generarReportePie} className="mt-3">
+                Generar reporte de gráfico de pastel
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }
 
-export default Estadisticas; // Exporta el componente Estadisticas para su uso en otras partes de la aplicación
+export default Estadisticas;
