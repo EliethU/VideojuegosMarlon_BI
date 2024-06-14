@@ -9,12 +9,19 @@ import Footer from '../components/Footer';
 import html2canvas from 'html2canvas';
 
 function Estadisticas({ Rol }) {
-
+  // Estados para manejar los datos y las instancias de los gráficos
   const [productos, setProductos] = useState([]);
   const [myChart, setMyChart] = useState(null);
   const [categoryChart, setCategoryChart] = useState(null);
   const [productosPorCategoria, setProductosPorCategoria] = useState([]);
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
+  const [revenueChart, setRevenueChart] = useState(null);
+  const [topProducts, setTopProducts] = useState([]);
+  const [productsChart, setProductsChart] = useState(null);
+  const [customerGrowth, setCustomerGrowth] = useState([]);
+  const [growthChart, setGrowthChart] = useState(null);
 
+  // Obtener los productos desde la API
   useEffect(() => {
     fetch('http://localhost:5000/crud/readproducto')
       .then((response) => response.json())
@@ -22,47 +29,51 @@ function Estadisticas({ Rol }) {
       .catch((error) => console.error('Error al obtener los productos:', error));
   }, []);
 
+  // Crear el gráfico de barras para el estado del almacén
   useEffect(() => {
     if (productos.length > 0) {
       const ctx = document.getElementById('myChart');
 
-      if (myChart !== null) {
-        myChart.destroy();
-      }
+      if (ctx) { // Verifica si el elemento existe en el DOM
+        if (myChart !== null) {
+          myChart.destroy();
+        }
 
-      const nombresProductos = productos.map((producto) => producto.nombreProducto);
-      const stokcs = productos.map((producto) => producto.Stock);
+        const nombresProductos = productos.map((producto) => producto.nombreProducto);
+        const stokcs = productos.map((producto) => producto.Stock);
 
-      const dynamicColors = stokcs.map(() => {
-        const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.5)`;
-        return randomColor;
-      });
+        const dynamicColors = stokcs.map(() => {
+          const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.5)`;
+          return randomColor;
+        });
 
-      const almacen = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: nombresProductos,
-          datasets: [{
-            label: 'Cantidad disponible',
-            data: stokcs,
-            backgroundColor: dynamicColors,
-            borderColor: dynamicColors.map(color => color.replace('0.5', '1')),
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
+        const almacen = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: nombresProductos,
+            datasets: [{
+              label: 'Cantidad disponible',
+              data: stokcs,
+              backgroundColor: dynamicColors,
+              borderColor: dynamicColors.map(color => color.replace('0.5', '1')),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
             }
           }
-        }
-      });
+        });
 
-      setMyChart(almacen);
+        setMyChart(almacen);
+      }
     }
   }, [productos]);
 
+  // Obtener los productos por categoría desde la API
   useEffect(() => {
     fetch('http://localhost:5000/crud/productosPorCategoria')
       .then((response) => response.json())
@@ -70,61 +81,222 @@ function Estadisticas({ Rol }) {
       .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
   }, []);
 
+  // Crear el gráfico de pastel para productos por categoría
   useEffect(() => {
     if (productosPorCategoria.length > 0) {
       const ctx = document.getElementById('myCategories');
 
-      if (categoryChart !== null) {
-        categoryChart.destroy();
+      if (ctx) { // Verifica si el elemento existe en el DOM
+        if (categoryChart !== null) {
+          categoryChart.destroy();
+        }
+
+        const labels = productosPorCategoria.map((Categoria) => Categoria.nombre);
+        const data = productosPorCategoria.map((Categoria) => Categoria.cantidadproducto);
+
+        const categorias = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Cantidad de productos por categoria',
+              data: data,
+              backgroundColor: [
+                'rgba(255,99,132,0.5)',
+                'rgba(54,162,235,0.5)',
+                'rgba(255,206,86,0.5)',
+                'rgba(75,192,192,0.5)',
+                'rgba(153,102,255,0.5)',
+                'rgba(255,159,64,0.5)'
+              ],
+              borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54,162,235,1)',
+                'rgba(255,206,86,1)',
+                'rgba(75,192,192,1)',
+                'rgba(153,102,255,1)',
+                'rgba(255,159,64,1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Cantidad de productos por categoría'
+              }
+            }
+          }
+        });
+        setCategoryChart(categorias);
+      }
+    }
+  }, [productosPorCategoria]);
+
+  // Obtener los ingresos mensuales desde la API
+  useEffect(() => {
+    fetch('http://localhost:5000/estadisticas/ingresostotalesmensuales')
+      .then((response) => response.json())
+      .then((data) => setMonthlyRevenue(data))
+      .catch((error) => console.error('Error al obtener los ingresos mensuales:', error));
+  }, []);
+
+  // Crear el gráfico de líneas para ingresos mensuales
+  useEffect(() => {
+    if (monthlyRevenue.length > 0) {
+      const ctx = document.getElementById('revenueChart');
+
+      if (ctx) { // Verifica si el elemento existe en el DOM
+        if (revenueChart !== null) {
+          revenueChart.destroy();
+        }
+
+        const months = monthlyRevenue.map((item) => item.Mes);
+        const revenue = monthlyRevenue.map((item) => item.IngresosTotales);
+
+        const chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: months,
+            datasets: [{
+              label: 'Ingresos Mensuales',
+              data: revenue,
+              backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+        setRevenueChart(chart);
+      }
+    }
+  }, [monthlyRevenue]);
+
+  // Obtener los productos más vendidos desde la API
+  useEffect(() => {
+    fetch('http://localhost:5000/estadisticas/ingresosporproducto')
+      .then((response) => response.json())
+      .then((data) => setTopProducts(data))
+      .catch((error) => console.error('Error al obtener los productos más vendidos:', error));
+  }, []);
+
+  // Crear el gráfico de barras para productos más vendidos
+  useEffect(() => {
+    if (topProducts.length > 0) {
+      const ctx = document.getElementById('productsChart');
+
+      if (ctx) { // Verifica si el elemento existe en el DOM
+        if (productsChart !== null) {
+          productsChart.destroy();
+        }
+
+        const products = topProducts.map((item) => item.nombreProducto);
+        const revenue = topProducts.map((item) => item.IngresosPorProducto);
+
+        const chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: products,
+            datasets: [{
+              label: 'Ingresos por Producto',
+              data: revenue,
+              backgroundColor: 'rgba(153, 102, 255, 0.5)',
+              borderColor: 'rgba(153, 102, 255, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+        setProductsChart(chart);
+      }
+    }
+  }, [topProducts]);
+
+ // Obtener el crecimiento de clientes desde la API
+  useEffect(() => {
+  fetch('http://localhost:5000/estadisticas/frecuenciadeuso')
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Datos de crecimiento de clientes:', data);
+      setCustomerGrowth(data);
+    })
+    .catch((error) => console.error('Error al obtener el crecimiento de clientes:', error));
+}, []);
+
+
+// Crear el gráfico de líneas para el crecimiento de clientes
+useEffect(() => {
+  if (customerGrowth.length > 0) {
+    const ctx = document.getElementById('growthChart');
+
+    if (ctx) { // Verifica si el elemento existe en el DOM
+      if (growthChart !== null) {
+        growthChart.destroy();
       }
 
-      const labels = productosPorCategoria.map((Categoria) => Categoria.nombre);
-      const data = productosPorCategoria.map((Categoria) => Categoria.cantidadproducto);
+      // Aquí asumimos que la API devuelve una lista de objetos con propiedades 'Mes' y 'NuevosClientes'
+      const months = customerGrowth.map((item) => item.Mes);
+      const customers = customerGrowth.map((item) => item.NuevosClientes);
 
-      const categorias = new Chart(ctx, {
-        type: 'pie',
+      const chart = new Chart(ctx, {
+        type: 'line',
         data: {
-          labels: labels,
+          labels: months,
           datasets: [{
-            label: 'Cantidad de productos por categoria',
-            data: data,
-            backgroundColor: [
-              'rgba(255,99,132,0.5)',
-              'rgba(54,162,235,0.5)',
-              'rgba(255,206,86,0.5)',
-              'rgba(75,192,192,0.5)',
-              'rgba(153,102,255,0.5)',
-              'rgba(255,159,64,0.5)'
-            ],
-            borderColor: [
-              'rgba(255,99,132,1)',
-              'rgba(54,162,235,1)',
-              'rgba(255,206,86,1)',
-              'rgba(75,192,192,1)',
-              'rgba(153,102,255,1)',
-              'rgba(255,159,64,1)'
-            ],
-            borderWidth: 1
+            label: 'Nuevos Clientes',
+            data: customers,
+            backgroundColor: 'rgba(255, 159, 64, 0.5)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 1,
+            fill: false // Esto asegura que el área debajo de la línea no se rellene
           }]
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Mes'
+              }
             },
-            title: {
-              display: true,
-              text: 'Cantidad de productos por categoría'
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Nuevos Clientes'
+              }
             }
           }
         }
       });
-      setCategoryChart(categorias);
-    }
-  }, [productosPorCategoria]);
 
-  
+      setGrowthChart(chart);
+    }
+  }
+}, [customerGrowth]);
+
+  // Generar reporte en PDF del gráfico de pastel
   const generarReportePie = async () => {
     try {
       const canvas = await html2canvas(document.getElementById('myCategories'));
@@ -138,6 +310,7 @@ function Estadisticas({ Rol }) {
     }
   };
 
+  // Generar reporte en PDF completo
   const generarReporteCompleto = async () => {
     try {
       const response = await fetch('http://localhost:5000/crud/readproducto');
@@ -162,7 +335,6 @@ function Estadisticas({ Rol }) {
         },
       });
 
-    
       const canvas = await html2canvas(document.getElementById('myChart'));
       const imgData = canvas.toDataURL('image/png');
       const pageWidth = pdf.internal.pageSize.width;
@@ -203,7 +375,6 @@ function Estadisticas({ Rol }) {
           </Card>
         </Col>
 
-
         <Col sm="12" md="12" lg="6">
           <Card>
             <Card.Body>
@@ -212,6 +383,33 @@ function Estadisticas({ Rol }) {
               <Button onClick={generarReportePie} className="mt-3">
                 Generar reporte de gráfico de pastel
               </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col sm="12" md="12" lg="6">
+          <Card>
+            <Card.Body>
+              <Card.Title>Ingresos Mensuales</Card.Title>
+              <canvas id="revenueChart" height="300"></canvas>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col sm="12" md="12" lg="6">
+          <Card>
+            <Card.Body>
+              <Card.Title>Productos Más Vendidos</Card.Title>
+              <canvas id="productsChart" height="300"></canvas>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col sm="12" md="12" lg="6">
+          <Card>
+            <Card.Body>
+              <Card.Title>Crecimiento de Clientes</Card.Title>
+              <canvas id="growthChart" height="300"></canvas>
             </Card.Body>
           </Card>
         </Col>
