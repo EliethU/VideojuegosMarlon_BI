@@ -5,7 +5,6 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Chart from 'chart.js/auto';
 import '../styles/App.css';
-import Footer from '../components/Footer';
 import html2canvas from 'html2canvas';
 
 function Estadisticas({ Rol }) {
@@ -73,7 +72,7 @@ function Estadisticas({ Rol }) {
     }
   }, [productos]);
 
-  // Obtener los productos por categoría desde la API
+  // Obtener los productos por categoría
   useEffect(() => {
     fetch('http://localhost:5000/crud/productosPorCategoria')
       .then((response) => response.json())
@@ -86,7 +85,7 @@ function Estadisticas({ Rol }) {
     if (productosPorCategoria.length > 0) {
       const ctx = document.getElementById('myCategories');
 
-      if (ctx) { // Verifica si el elemento existe en el DOM
+      if (ctx) { 
         if (categoryChart !== null) {
           categoryChart.destroy();
         }
@@ -138,7 +137,7 @@ function Estadisticas({ Rol }) {
     }
   }, [productosPorCategoria]);
 
-  // Obtener los ingresos mensuales desde la API
+  // Obtener los ingresos mensuales desde
   useEffect(() => {
     fetch('http://localhost:5000/estadisticas/ingresostotalesmensuales')
       .then((response) => response.json())
@@ -146,12 +145,12 @@ function Estadisticas({ Rol }) {
       .catch((error) => console.error('Error al obtener los ingresos mensuales:', error));
   }, []);
 
-  // Crear el gráfico de líneas para ingresos mensuales
+  // Crear el gráfico de líneas para los ingresos mensuales
   useEffect(() => {
     if (monthlyRevenue.length > 0) {
       const ctx = document.getElementById('revenueChart');
 
-      if (ctx) { // Verifica si el elemento existe en el DOM
+      if (ctx) { 
         if (revenueChart !== null) {
           revenueChart.destroy();
         }
@@ -187,7 +186,7 @@ function Estadisticas({ Rol }) {
 
   // Obtener los productos más vendidos desde la API
   useEffect(() => {
-    fetch('http://localhost:5000/estadisticas/ingresosporproducto')
+    fetch('http://localhost:5000/estadisticas/productosmasvendidos')
       .then((response) => response.json())
       .then((data) => setTopProducts(data))
       .catch((error) => console.error('Error al obtener los productos más vendidos:', error));
@@ -232,7 +231,8 @@ function Estadisticas({ Rol }) {
     }
   }, [topProducts]);
 
- // Obtener el crecimiento de clientes desde la API
+ //Verificar este grafico
+ // Obtener el crecimiento de clientes
   useEffect(() => {
   fetch('http://localhost:5000/estadisticas/frecuenciadeuso')
     .then((response) => response.json())
@@ -296,21 +296,56 @@ useEffect(() => {
   }
 }, [customerGrowth]);
 
-  // Generar reporte en PDF del gráfico de pastel
-  const generarReportePie = async () => {
-    try {
-      const canvas = await html2canvas(document.getElementById('myCategories'));
-      const imgData = canvas.toDataURL('image/png');
+ // Generar reporte en PDF del gráfico de pastel
+const generarReportePastel = async () => {
+  try {
+    // Asegúrate de que html2canvas y jsPDF estén disponibles
+    const canvas = await html2canvas(document.getElementById('myCategories'));
+    const imgData = canvas.toDataURL('image/png');
 
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, 'PNG', 10, 10);
-      pdf.save('reporte_pastel.pdf');
-    } catch (error) {
-      console.error('Error al generar el reporte del gráfico de pie:', error);
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.width;
+    const imgWidth = pageWidth - 40; // Ajusta el ancho de la imagen
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const xPos = 20; // Ajusta la posición X
+
+    const response = await fetch('http://localhost:5000/crud/productosPorCategoria');
+    const productosPorCategoria = await response.json();
+
+    pdf.setTextColor(128, 0, 128);
+    pdf.text("Reporte de los productos por categoría", 20, 15);
+    pdf.setTextColor(0, 0, 0);
+
+    // Añadir la cantidad de productos por cada categoría en el encabezado del PDF
+    const columns = ["Categoria", "Cantidad de productos"];
+    const rows = productosPorCategoria.map((producto) => [producto.nombre, producto.cantidad]);
+
+    // Verifica si autoTable está disponible
+    if (pdf.autoTable) {
+      pdf.autoTable({
+        head: [columns],
+        body: rows,
+        startY: 25,
+        margin: { top: 15 },
+        styles: {
+          lineColor: [0, 0, 0],
+          lineWidth: 0.5,
+        },
+      });
+    } else {
+      console.error('autoTable no está disponible en jsPDF');
     }
-  };
 
-  // Generar reporte en PDF completo
+    pdf.addPage();
+    pdf.addImage(imgData, xPos, 20, imgWidth, imgHeight);
+
+    pdf.save("reporte_pastel.pdf");
+  } catch (error) {
+    console.error('Error al generar el reporte de pastel', error);
+  }
+};
+
+  // Generar reporte en PDF del reporte completo
   const generarReporteCompleto = async () => {
     try {
       const response = await fetch('http://localhost:5000/crud/readproducto');
@@ -351,11 +386,29 @@ useEffect(() => {
     }
   };
 
+//Generar reporte en PDF del gráfico de ingresos mensuales  
+const generarReporteIngresosMensuales = () => {
+  const input = document.getElementById('revenueChart');
+
+  html2canvas(input, { allowTaint: true }).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF();
+    const imgProps = pdf.getImageProperties(canvas);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save('ReporteIngresosMensuales.pdf');
+  });
+};
+
+
+  //Generacion de botones
   return (
     <div>
       <Header Rol={Rol} />
       <Row className="margen-contenedor text-center g-3">
-        <Col sm="6" md="6" lg="12">
+        <Col sm="12" md="12" lg="12">
           <Card>
             <Card.Body>
               <Card.Title>Estado del almacén</Card.Title>
@@ -376,31 +429,38 @@ useEffect(() => {
         </Col>
 
         <Col sm="12" md="12" lg="6">
-          <Card>
-            <Card.Body>
-              <Card.Title>Productos por Categoría</Card.Title>
-              <canvas id="myCategories" height="120"></canvas>
-              <Button onClick={generarReportePie} className="mt-3">
-                Generar reporte de gráfico de pastel
-              </Button>
-            </Card.Body>
+        <Card>
+          <Card.Body>
+            <Card.Title>Productos por Categoría</Card.Title>
+            <canvas id="myCategories" height="120"></canvas>
+            <Button onClick={generarReportePastel} className="mt-3">
+            Generar reporte de gráfico de pastel
+            </Button>
+          </Card.Body>
           </Card>
         </Col>
 
         <Col sm="12" md="12" lg="6">
-          <Card>
-            <Card.Body>
-              <Card.Title>Ingresos Mensuales</Card.Title>
-              <canvas id="revenueChart" height="300"></canvas>
-            </Card.Body>
-          </Card>
+        <Card>
+          <Card.Body>
+            <Card.Title>Ingresos Mensuales</Card.Title>
+          <div id="myCategories">
+            <canvas id="revenueChart" height="300"></canvas>
+          </div>
+            <Button onClick={generarReporteIngresosMensuales} className="mt-3">
+            Generar reporte de ingresos mensuales
+            </Button>
+          </Card.Body>
+        </Card>
         </Col>
 
         <Col sm="12" md="12" lg="6">
           <Card>
             <Card.Body>
               <Card.Title>Productos Más Vendidos</Card.Title>
-              <canvas id="productsChart" height="300"></canvas>
+              <div id="myCategories">
+            <canvas id="revenueChart" height="300"></canvas>
+              </div>
             </Card.Body>
           </Card>
         </Col>

@@ -530,6 +530,7 @@ router.put('/updateProducto/:id_producto', (req, res) => {
         });
     });
 
+    //ruta del grafico del pastel
     router.get('/productosPorCategoria', (req, res) => { 
         const sql = `
             SELECT
@@ -548,7 +549,7 @@ router.put('/updateProducto/:id_producto', (req, res) => {
             res.status(508).json({ error: 'Error al obtener la cantidad de productos por categoría' });
         }   else {
             res.status(208).json(result);
-          }
+        }
         });
     });
         
