@@ -22,7 +22,7 @@ function Estadisticas({ Rol }) {  // Declaración del componente Estadisticas co
                 <Card.Body>
                 <Card.Title>Estado del almacen</Card.Title>
 
-                <iframe title="REPORTE KARDEX" width="1024" height="804" src="https://app.powerbi.com/view?r=eyJrIjoiYzJhY2RhOTEtMGIzNy00ZjE2LWFlZGYtZTVmOThjNjY0Yzk2IiwidCI6ImU0NzY0NmZlLWRhMjctNDUxOC04NDM2LTVmOGIxNThiYTEyNyIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+                <iframe title="REPORTE KARDEX" width="1024" height="804" src="https://app.powerbi.com/reportEmbed?reportId=95a94701-9261-4547-a585-9060e4eb725e&autoAuth=true&ctid=e47646fe-da27-4518-8436-5f8b158ba127" frameborder="0" allowFullScreen="true"></iframe>
 
                 <Button onClick={imprimirEstadisticas}>
                     Generar reporte con imagen
