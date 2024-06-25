@@ -21,8 +21,9 @@ CREATE TABLE Dim_Producto (
   id_producto INT PRIMARY KEY,
   nombreProducto VARCHAR(30),
   precio INT,
-  nombre VARCHAR (30),
-  descripcion VARCHAR(100)
+  Categoria VARCHAR (30),
+  descripcion VARCHAR(100),
+  Stock INT
 );
 
 CREATE TABLE Hechos_Ventas (

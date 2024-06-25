@@ -1,6 +1,10 @@
 USE videojuegosmarlon_dm;
 
 /*Consultas Data Mart*/
+
+/*Consulta de estado almacen*/
+SELECT nombreProducto, Stock FROM Dim_Producto;
+
 SELECT
     CONCAT(YEAR(fecha), LPAD(MONTH(fecha), 2, '0'), LPAD(DAY(fecha), 2, '0')) AS ID_Tiempo,
     fecha AS Fecha,

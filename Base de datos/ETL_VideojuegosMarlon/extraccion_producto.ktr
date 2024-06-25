@@ -444,7 +444,7 @@
     <database>BDVideojuegosMarlon</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb79ce108cc0fe8b</password>
+    <password>Encrypted 2be98afc86aa7f289b20abf7c8cc2fd89</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -567,7 +567,8 @@
     p.nombreProducto,
 	p.descripcion,
     p.precio,
-	cp.nombre
+	cp.nombre AS Categoria,
+	p. Stock
 FROM
     Producto p
     INNER JOIN Categoria cp ON p.id_categoria = cp.id_categoria;</sql>
@@ -587,8 +588,8 @@ FROM
         <origin>extraccion_producto</origin>
         <comments>id_producto</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -597,8 +598,8 @@ FROM
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -610,8 +611,8 @@ FROM
         <origin>extraccion_producto</origin>
         <comments>nombreProducto</comments>
         <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -620,8 +621,8 @@ FROM
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -633,8 +634,8 @@ FROM
         <origin>extraccion_producto</origin>
         <comments>descripcion</comments>
         <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -643,8 +644,8 @@ FROM
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -656,8 +657,8 @@ FROM
         <origin>extraccion_producto</origin>
         <comments>precio</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -666,21 +667,21 @@ FROM
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
         <type>String</type>
         <storagetype>normal</storagetype>
-        <name>nombre</name>
+        <name>Categoria</name>
         <length>30</length>
         <precision>-1</precision>
         <origin>extraccion_producto</origin>
-        <comments>nombre</comments>
+        <comments>Categoria</comments>
         <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -689,8 +690,31 @@ FROM
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>Stock</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>extraccion_producto</origin>
+        <comments>Stock</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
     </row-meta>

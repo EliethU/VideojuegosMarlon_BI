@@ -101,7 +101,7 @@ function Header({ Rol }) {
                 </Nav.Link>
 
                 <Nav.Link>
-                    <Link to="/reporte" className="link-unstyled">Reporte</Link>
+                    <Link to="/reportes" className="link-unstyled">Reportes</Link>
                 </Nav.Link>
 
                 <Nav.Link onClick={cerrarSesion}>

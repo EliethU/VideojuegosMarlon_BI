@@ -2,6 +2,22 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (db) => {
+
+    //Ruta de estado almacen
+    router.get('/estadoalmacen', (req, res) => {
+        const sql = `SELECT nombreProducto, Stock FROM Dim_Producto`;
+    
+        // Ejecutar la consulta
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error al leer los productos:', err);
+                res.status(500).json({ error: 'Error al leer los productos' });
+            } else {
+                // Devolver los registros en formato JSON como respuesta
+                res.status(200).json(result);
+            }
+        });
+    });
     
 //Consulta de ventas por año
     router.get('/ventasporanyo', (req, res) => {
