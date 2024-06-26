@@ -9,6 +9,8 @@ import html2canvas from 'html2canvas';
 import emailjs from 'emailjs-com'
 import * as XLSX from 'xlsx';
 import { FaFileExcel  } from 'react-icons/fa6';
+import { FaRegFilePdf } from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
 
 
 function Reportes({ Rol }) {
@@ -126,6 +128,35 @@ function Reportes({ Rol }) {
     XLSX.writeFile(workbook, 'AlmacenCompleto.xlsx');
   };
 
+//Correo para Grafico de pastel
+  const formatearProductosCategoria = (productosPorCategoria) => {
+    return productosPorCategoria.map(productosPorCategoria => {
+      return `Productos: ${productosPorCategoria.cantidadproducto}\nCategoria: ${productosPorCategoria.nombre}`;
+    }).join('\n\n');
+  };
+
+  const enviarCorreo1 = () => {
+    // Formateo de datos
+    const EstadoCategoriaFormateado = formatearProductosCategoria(productosPorCategoria);
+
+    // Datos de ejemplo (reemplaza con tus datos reales)
+    const data = {
+      to_name: 'Josnel',
+      user_email: 'josnellopezdiaz@gmail.com',
+      message: EstadoCategoriaFormateado,
+    };
+
+    // Envía el correo utilizando EmailJS
+    emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
+      .then((response) => {
+        alert('Correo enviado.');
+        console.log('Correo enviado.', response);
+      })
+      .catch((error) => {
+        alert('Error al enviar el correo.');
+        console.error('Error al enviar el correo:', error);
+      });
+  };
 
   // Obtener los productos por categoría
   useEffect(() => {
@@ -192,6 +223,30 @@ function Reportes({ Rol }) {
     }
   }, [productosPorCategoria]);
 
+  // Crear la tabla de productos por categoría
+  const renderTable = () => {
+    if (productosPorCategoria.length > 0) {
+      return (
+        <table>
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Cantidad de Productos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productosPorCategoria.map((categoria, index) => (
+              <tr key={index}>
+                <td>{categoria.nombre}</td>
+                <td>{categoria.cantidadproducto}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        )
+      }
+    };
+
   //Excel
   const exportarAExcel = () => {
     // Convertir los datos JSON a una hoja de trabajo de Excel
@@ -202,6 +257,8 @@ function Reportes({ Rol }) {
      // Generar y descargar el archivo Excel
      XLSX.writeFile(workbook, 'productosporcategoria.xlsx');
     };
+
+
 
   // Obtener los ingresos mensuales desde
   useEffect(() => {
@@ -487,13 +544,13 @@ const generarReporteIngresosMensuales = () => {
             <Card.Body>
               <Card.Title>Estado del almacén</Card.Title>
               <canvas id="myChart" height="300"></canvas>
-              <Button onClick={generarReporteCompleto} className="mt-3">
-                Generar reporte completo
+              <Button onClick={generarReporteCompleto} className="m-3 mb-3">
+              <FaRegFilePdf style={{ color: 'white' }}/>
               </Button>
-              <Button variant="secondary" onClick={enviarCorreo} className="mt-2">
-                Enviar por Correo
+              <Button variant="secondary" onClick={enviarCorreo} className="mt-3 mb-3">
+              <SiGmail style={{ color: 'white' }} />
               </Button>
-              <Button variant="success" onClick={excelAlmacenCompleto} className="m-1">
+              <Button variant="success" onClick={excelAlmacenCompleto} className="m-3 mb-3">
                 <FaFileExcel style={{ color: 'white' }} />
               </Button>
             </Card.Body>
@@ -505,10 +562,13 @@ const generarReporteIngresosMensuales = () => {
           <Card.Body>
             <Card.Title>Productos por Categoría</Card.Title>
             <canvas id="myCategories" height="120"></canvas>
-            <Button onClick={generarReportePastel} className="mt-3">
-            Generar reporte de gráfico de pastel
+            <Button onClick={generarReportePastel} className="m-3 mb-3">
+            <FaRegFilePdf style={{ color: 'white' }}/>
             </Button>
-            <Button variant="success" onClick={exportarAExcel} className="m-1">
+            <Button variant="secondary" onClick={enviarCorreo1} className="mt-3 mb-3">
+              <SiGmail style={{ color: 'white' }} />
+              </Button>
+            <Button variant="success" onClick={exportarAExcel} className="m-3">
                 <FaFileExcel style={{ color: 'white' }} />
               </Button>
           </Card.Body>
@@ -525,6 +585,7 @@ const generarReporteIngresosMensuales = () => {
             <Button onClick={generarReporteIngresosMensuales} className="mt-3">
             Generar reporte de ingresos mensuales
             </Button>
+
           </Card.Body>
         </Card>
         </Col>

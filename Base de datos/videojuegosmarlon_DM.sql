@@ -7,8 +7,15 @@ CREATE TABLE Dim_Tiempo (
   fecha DATE,
   anyo INT,
   mes INT,
-  dia INT
+  dia INT,
+  semestre INT
 );
+
+UPDATE Dim_Tiempo
+SET semestre = CASE 
+    WHEN mes BETWEEN 1 AND 6 THEN 1
+    WHEN mes BETWEEN 7 AND 12 THEN 2
+END;
 
 CREATE TABLE Dim_Cliente (
   id_cliente INT PRIMARY KEY,

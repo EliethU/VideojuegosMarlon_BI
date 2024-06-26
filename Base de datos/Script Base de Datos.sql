@@ -112,4 +112,5 @@ SELECT * FROM Venta;
 SELECT * FROM detalle;
 SELECT * FROM Producto;
 SELECT * FROM cliente;
+SELECT * FROM categoria;
 

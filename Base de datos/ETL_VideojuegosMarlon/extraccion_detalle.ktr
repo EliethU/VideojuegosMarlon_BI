@@ -565,21 +565,18 @@
     D.id_detalle AS id_hventas,
     V.id_venta,
     V.id_cliente,
-    CONCAT(
-        YEAR(V.fecha), 
-        LPAD(MONTH(V.fecha), 2, '0'), 
-        LPAD(DAY(V.fecha), 2, '0')
-    ) AS id_tiempo,
+    DATE_FORMAT(V.fecha, '%Y%m%d') AS id_tiempo,
     D.id_producto,
     D.cantidad,
-	P.precio AS precio_unitario,
-	 (D.cantidad * P.precio) AS total_venta
+    P.precio AS precio_unitario,
+    (D.cantidad * P.precio) AS total_venta
 FROM
     Venta V
 JOIN
     Detalle D ON V.id_venta = D.id_venta
 JOIN
-    Producto P ON D.id_producto = P.id_producto;</sql>
+    Producto P ON D.id_producto = P.id_producto;
+</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -660,7 +657,7 @@ JOIN
         <type>String</type>
         <storagetype>normal</storagetype>
         <name>id_tiempo</name>
-        <length>9</length>
+        <length>8</length>
         <precision>-1</precision>
         <origin>extraccion_detalle</origin>
         <comments>id_tiempo</comments>
