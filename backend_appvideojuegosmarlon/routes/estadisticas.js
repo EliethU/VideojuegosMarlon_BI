@@ -45,7 +45,7 @@ module.exports = (db) => {
     });
 
     //Consulta de ventas totales por mes de un año específico
-    router.get('/ventaspormes2022', (req, res) => {
+    router.get('/ventaspormes', (req, res) => {
 
     const sql = `SELECT 
     Mes, 

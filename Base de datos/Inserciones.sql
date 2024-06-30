@@ -26,27 +26,6 @@ INSERT INTO Usuario (nombre_Usuario, contraseña, Rol) VALUES
 
 /*Inserciones de Clientes*/
 INSERT INTO Cliente (id_Usuario, nombre, apellido, telefono) VALUES
-(5, 'Alice', 'Smith', '5550001'),
-(6, 'Bob', 'Johnson', '5550002'),
-(7, 'Charlie', 'Williams', '5550003'),
-(8, 'David', 'Brown', '5550004'),
-(9, 'Eva', 'Jones', '5550005'),
-(10, 'Frank', 'Garcia', '5550006'),
-(11, 'Grace', 'Martinez', '5550007'),
-(12, 'Hank', 'Davis', '5550008'),
-(13, 'Irene', 'Lopez', '5550009'),
-(14, 'Jack', 'Gonzalez', '5550010'),
-(15, 'Kate', 'Wilson', '5550011'),
-(16, 'Leo', 'Anderson', '5550012'),
-(17, 'Mia', 'Thomas', '5550013'),
-(18, 'Nick', 'Taylor', '5550014'),
-(19, 'Olivia', 'Moore', '5550015'),
-(20, 'Paul', 'Jackson', '5550016'),
-(21, 'Quincy', 'Martin', '5550017'),
-(22, 'Rachel', 'Lee', '5550018'),
-(23, 'Steve', 'Perez', '5550019'),
-(24, 'Tina', 'Thompson', '5550020');
-
 (3, 'Alice', 'Smith', '5550001'),
 (4, 'Bob', 'Johnson', '5550002'),
 (5, 'Charlie', 'Williams', '5550003'),
@@ -67,7 +46,6 @@ INSERT INTO Cliente (id_Usuario, nombre, apellido, telefono) VALUES
 (20, 'Rachel', 'Lee', '5550018'),
 (21, 'Steve', 'Perez', '5550019'),
 (22, 'Tina', 'Thompson', '5550020');
-
 
 /*Inserciones de categoria*/
 INSERT INTO Categoria (nombre) VALUES

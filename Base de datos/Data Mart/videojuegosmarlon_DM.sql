@@ -1,5 +1,4 @@
 CREATE DATABASE videojuegosmarlon_DM;
-
 USE videojuegosmarlon_DM;
 
 CREATE TABLE Dim_Tiempo (
@@ -39,6 +38,7 @@ CREATE TABLE Hechos_Ventas (
   id_producto INT,
   id_tiempo INT,
   id_cliente INT,
+  fecha DATE,
   cantidad INT,
   precio_unitario INT,
   total_venta INT,

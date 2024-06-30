@@ -27,6 +27,7 @@ function Reportes({ Rol }) {
   const [customerGrowth, setCustomerGrowth] = useState([]);
   const [growthChart, setGrowthChart] = useState(null);
 
+
   const formatearEstadoAlmacen = (productos) => {
     return productos.map(producto => {
       return `Nombre: ${producto.nombreProducto}\nCantidad: ${producto.Stock}`;
@@ -117,7 +118,7 @@ function Reportes({ Rol }) {
 
 
   //Excel
-   const excelAlmacenCompleto = () => {
+    const excelAlmacenCompleto = () => {
     console.log(estadoAlmacen);
     // Convertir los datos JSON a una hoja de trabajo de Excel
     const worksheet = XLSX.utils.json_to_sheet(estadoAlmacen);
@@ -255,12 +256,10 @@ function Reportes({ Rol }) {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Productos por categoria');
 
      // Generar y descargar el archivo Excel
-     XLSX.writeFile(workbook, 'productosporcategoria.xlsx');
+    XLSX.writeFile(workbook, 'productosporcategoria.xlsx');
     };
 
-
-
-  // Obtener los ingresos mensuales desde
+   // Obtener los ingresos mensuales desde
   useEffect(() => {
     fetch('http://localhost:5000/estadisticas/ingresostotalesmensuales')
       .then((response) => response.json())
@@ -307,15 +306,15 @@ function Reportes({ Rol }) {
     }
   }, [monthlyRevenue]);
 
-  // Obtener los productos más vendidos desde la API
+  // Obtener las ventas por año
   useEffect(() => {
-    fetch('http://localhost:5000/estadisticas/productosmasvendidos')
+    fetch('http://localhost:5000/estadisticas//ventasporanyo')
       .then((response) => response.json())
       .then((data) => setTopProducts(data))
-      .catch((error) => console.error('Error al obtener los productos más vendidos:', error));
+      .catch((error) => console.error('Error al obtener las ventas por año:', error));
   }, []);
 
-  // Crear el gráfico de barras para productos más vendidos
+  // Crear el gráfico de barras para las ventas por año
   useEffect(() => {
     if (topProducts.length > 0) {
       const ctx = document.getElementById('productsChart');

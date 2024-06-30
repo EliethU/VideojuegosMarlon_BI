@@ -10,9 +10,6 @@ VALUES ('INSERT', current_user(), NOW(), 'Cliente');
 //
 DELIMITER ;
 
--- Verificar si se activó el trigger
-SELECT * FROM Bitacora;
-
 -- Trigger para actualizar en Cliente
 DELIMITER //
 CREATE TRIGGER TriggerUpdateCliente
@@ -44,9 +41,6 @@ INSERT INTO bitacora (transaccion, usuario, fecha, tabla)
 VALUES ('INSERT', current_user(), NOW(), 'Categoria');
 //
 DELIMITER ;
-
--- Verificar si se activó el trigger
-SELECT * FROM Bitacora;
 
 -- Trigger para actualizar en Categoria
 DELIMITER //
@@ -116,9 +110,6 @@ BEGIN
 END;
 //
 DELIMITER ;
-
--- Verificar si se activó el trigger
-SELECT * FROM Bitacora;
 
 -- Trigger para actualizar en Venta
 DELIMITER //
