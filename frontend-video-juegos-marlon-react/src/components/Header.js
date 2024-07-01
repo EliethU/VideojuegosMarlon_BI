@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Offcanvas, Button, NavDropdown, Container } from 'react-bootstrap';
 import { FaRightFromBracket } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
-
+import logo from './Logo.jpg'
 
 function Header({ Rol }) {
 
@@ -28,11 +28,8 @@ function Header({ Rol }) {
           <Container>
 
           <Navbar.Brand href="#home" className="mr-auto">
-          <img
-            src={process.env.PUBLIC_URL + '/Logo.png'}
-            alt="Videojuegos Marlón"
-            style={{ marginLeft: '-20px', maxHeight: '50px', maxWidth: '150px' }}
-            />
+          <img src={logo} alt="Logo" className="brand-logo" style={{ maxWidth: '50px' }}/>
+            
               <span style={{ marginLeft: '10px', marginRight: '10px', fontSize: '1.5rem', color: 'white' }}>Videojuegos Marlón</span>
             </Navbar.Brand>
 
@@ -107,8 +104,6 @@ function Header({ Rol }) {
                 <Nav.Link onClick={cerrarSesion}>
                     <Link to="/" className="link-unstyled"><FaRightFromBracket /></Link>
                 </Nav.Link>
-
-
               </Nav>
             </Navbar.Collapse>
             <Button

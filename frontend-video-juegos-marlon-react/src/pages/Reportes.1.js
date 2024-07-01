@@ -18,15 +18,11 @@ export function Reportes({ Rol }) {
   const [productosPorCategoria, setProductosPorCategoria] = useState([]);
   const [ingresostotalesmensuales, setingresostotalesmensuales] = useState([]);
   const [ventasPorAnyo, setVentasPorAnyo] = useState([]);
-  const [ventasPorProducto, setVentasPorProducto] = useState([]);
-  const [top5MasVendidos, setTop5MasVendidos] = useState([]);
 
   const [myChart, setMyChart] = useState(null);
   const [categoryChart, setCategoryChart] = useState(null);
   const [revenueChart, setRevenueChart] = useState(null); 
   const [myChart4, setMyChart4] = useState(null);
-  const [myChart5, setMyChart5] = useState(null);
-  const [myChart6, setMyChart6] = useState(null);
 
   //Estado de almacen
   const formatearEstadoAlmacen = (productos) => {
@@ -116,6 +112,7 @@ export function Reportes({ Rol }) {
       .then((data) => setEstadoAlmacen(data))
       .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
   }, []);
+
 
   //Excel
   const excelAlmacenCompleto = () => {
@@ -524,181 +521,6 @@ const generarReporteVentasAnyo = async () => {
   }
 };
 
-
-//Ventas por productos
-// Obtener las ventas totales por producto desde la API
-useEffect(() => {
-  fetch('http://localhost:5000/estadisticas/ventasporproducto')
-    .then((response) => response.json())
-    .then((data) => setVentasPorProducto(data))
-    .catch((error) => console.error('Error al obtener las ventas totales por producto:', error));
-}, []);
-
-// Crear el gráfico de barras para ventas por producto
-useEffect(() => {
-  if (ventasPorProducto.length > 0) {
-    const ctx = document.getElementById('myChart5');
-
-    if (ctx) { // Verifica si el elemento existe en el DOM
-      if (myChart4 !== null) {
-        myChart4.destroy();
-      }
-
-      const anyos = ventasPorProducto.map((venta) => venta.nombreProducto);
-      const ventas = ventasPorAnyo.map((venta) => venta.Ventas_totales);
-
-      const ventasProductos = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: anyos,
-          datasets: [{
-            label: 'Ventas por Productos',
-            data: ventas,
-            backgroundColor: 'rgba(153, 102, 255, 0.5)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-
-      setMyChart5(ventasProductos);
-    }
-  }
-}, [ventasPorProducto]);
-
-// Generar reporte en PDF del gráfico de ventas por producto
-const generarReporteVentasProducto = async () => {
-  try {
-    const canvas = await html2canvas(document.getElementById('myChart4'));
-    const imgData = canvas.toDataURL('image/png');
-    
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.width;
-    const imgWidth = pageWidth - 40; // Ajusta el ancho de la imagen
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const xPos = 20; // Ajusta la posición X
-    
-    const response = await fetch('http://localhost:5000/estadisticas/ventasporproducto');
-    const ventasPorProducto = await response.json();
-    
-    pdf.setTextColor(128, 0, 128);
-    pdf.text("Reporte de Ventas por producto", 20, 15);
-    pdf.setTextColor(0, 0, 0);
-    
-    const columns = ["Productos", "Ventas Totales"];
-    const rows = ventasPorProducto.map((venta) => [venta.nombresProducto, venta.Ventas_totales]);
-    
-    pdf.autoTable({
-      head: [columns],
-      body: rows,
-      startY: 25,
-      margin: { top: 15 },
-      styles: {
-        lineColor: [0, 0, 0],
-        lineWidth: 0.5,
-      },
-    });
-    
-    pdf.addPage();
-    pdf.addImage(imgData, xPos, 20, imgWidth, imgHeight);
-    
-    pdf.save("reporte_ventas_producto.pdf");
-  } catch (error) {
-    console.error('Error al generar el reporte de ventas por producto:', error);
-  }
-};
-
-
-//Top 5 productos mas vendidos
-// Obtener datos del top 5 productos más vendidos
-useEffect(() => {
-  const obtenerTop5MasVendidos = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/estadisticas/top5masvendidos');
-      const data = await response.json();
-      setTop5MasVendidos(data);
-    } catch (error) {
-      console.error('Error al obtener el top 5 productos más vendidos:', error);
-    }
-  };
-
-  obtenerTop5MasVendidos();
-}, []);
-
-// Generar gráfico de top 5 productos más vendidos
-useEffect(() => {
-  if (top5MasVendidos.length > 0) {
-    const ctx = document.getElementById('top5Chart').getContext('2d');
-    if (myChart6) {
-      myChart6.destroy();
-    }
-    const nombresProductos = top5MasVendidos.map(producto => producto.nombreProducto);
-    const ventas = top5MasVendidos.map(producto => producto.cantidadVendida);
-
-    const dynamicColors = nombresProductos.map(() => {
-      const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.5)`;
-      return randomColor;
-    });
-
-    const top5Chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: nombresProductos,
-        datasets: [{
-          label: 'Cantidad Vendida',
-          data: ventas,
-          backgroundColor: dynamicColors,
-          borderColor: dynamicColors.map(color => color.replace('0.5', '1')),
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-
-    setMyChart6(top5Chart);
-  }
-}, [top5MasVendidos]);
-
-// Generar reporte en PDF del top 5 productos más vendidos
-const generarReporteTop5MasVendidos = async () => {
-  try {
-    const canvas = document.getElementById('top5Chart');
-    const imgData = canvas.toDataURL('image/png');
-
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.width;
-    const imgWidth = pageWidth - 40;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const xPos = 20;
-
-    pdf.setTextColor(128, 0, 128);
-    pdf.text("Reporte de los Top 5 productos más vendidos", 20, 15);
-    pdf.setTextColor(0, 0, 0);
-
-    pdf.addImage(imgData, 'PNG', xPos, 25, imgWidth, imgHeight);
-
-    pdf.save('reporte_top5_mas_vendidos.pdf');
-  } catch (error) {
-    console.error('Error al generar el reporte de Top 5 productos más vendidos:', error);
-  }
-};
-
-
-
-
    //Generacion de botones
   return (
     <div>
@@ -712,7 +534,7 @@ const generarReporteTop5MasVendidos = async () => {
           </Card>
         </Col>
 
-        <Col sm="12" md="12" lg="6">
+        <Col sm="12" md="6" lg="12">
           <Card>
             <Card.Body>
               <Card.Title>Estado del almacén</Card.Title>
@@ -730,7 +552,7 @@ const generarReporteTop5MasVendidos = async () => {
           </Card>
         </Col>
 
-        <Col sm="12" md="12" lg="6">
+        <Col sm="12" md="6" lg="12">
         <Card>
           <Card.Body>
             <Card.Title>Productos por Categoría</Card.Title>
@@ -778,35 +600,7 @@ const generarReporteTop5MasVendidos = async () => {
               </Button>                        
             </Card.Body>
           </Card>
-        </Col>
-
-        <Col sm="12" md="12" lg="6">
-        <Card>
-          <Card.Body>
-            <Card.Title className='title'>Ventas Totales por Productos</Card.Title>
-              <canvas id="myChart5"  height="120"></canvas>
-            </Card.Body>
-            <Card.Body>
-              <Button onClick={generarReporteVentasProducto} variant="danger">
-                  <FaRegFilePdf style={{ color: 'white' }}/>
-              </Button>                        
-            </Card.Body>
-          </Card>
-        </Col>
-
-        <Col sm="12" md="12" lg="6">
-        <Card>
-          <Card.Body>
-            <Card.Title className='title'>Top 5 Productos más vendidos</Card.Title>
-              <canvas id="myChart6"  height="120"></canvas>
-            </Card.Body>
-            <Card.Body>
-              <Button onClick={generarReporteTop5MasVendidos} variant="danger">
-                  <FaRegFilePdf style={{ color: 'white' }}/>
-              </Button>                        
-            </Card.Body>
-          </Card>
-        </Col>
+        </Col> 
       </Row>
     </div>
   );
