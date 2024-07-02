@@ -332,29 +332,30 @@ export function Reportes({ Rol }) {
   // Ingresos Totales
 
   // Obtener los ingresos totales mensuales desde la API
-  useEffect(() => {
-    fetch('http://localhost:5000/estadisticas/ingresostotalesmensuales')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Datos de ingresos totales mensuales:', data);
-        setingresostotalesmensuales(data);
-      })
-      .catch((error) => console.error('Error al obtener los ingresos totales mensuales:', error));
-  }, []);
+useEffect(() => {
+  fetch('http://localhost:5000/estadisticas/ingresostotalesmensuales')
+    .then(response => response.json())
+    .then(data => {
+      console.log('Datos de ingresos totales mensuales:', data);
+      setingresostotalesmensuales(data); // Asumiendo que setIngresosTotalesMensuales actualiza el estado
+    })
+    .catch(error => console.error('Error al obtener los ingresos totales mensuales:', error));
+}, []);
+
 
   // Crear el gráfico de líneas para ingresos totales mensuales
   useEffect(() => {
     if (ingresostotalesmensuales.length > 0) {
       const ctx = document.getElementById('myRevenues');
-
-      if (ctx) { // Verifica si el elemento existe en el DOM
+  
+      if (ctx) {
         if (revenueChart !== null) {
           revenueChart.destroy();
         }
-
-        const meses = ingresostotalesmensuales.map((ingreso) => ingreso.Mes);
-        const ingresos = ingresostotalesmensuales.map((ingreso) => ingreso.IngresosTotales);
-
+  
+        const meses = ingresostotalesmensuales.map(ingreso => ingreso.Mes);
+        const ingresos = ingresostotalesmensuales.map(ingreso => ingreso.IngresosTotales);
+  
         const ingresosMensuales = new Chart(ctx, {
           type: 'line',
           data: {
@@ -375,8 +376,8 @@ export function Reportes({ Rol }) {
             }
           }
         });
-
-        setRevenueChart(ingresosMensuales);
+  
+        setRevenueChart(ingresosMensuales); // Asumiendo que setRevenueChart actualiza el estado
       }
     }
   }, [ingresostotalesmensuales]);
@@ -425,8 +426,14 @@ export function Reportes({ Rol }) {
 
 //Generar reporte en PDF del gráfico de ingresos mensuales  
 const generarReporteIngresosMensuales = () => {
-  const input = document.getElementById('revenueChart');
+  const input = document.getElementById('myRevenues');
 
+  if (!input) {
+    console.error('Elemento canvas no encontrado');
+    return;
+  }
+
+  // Resto del código para generar el PDF
   html2canvas(input, { allowTaint: true }).then((canvas) => {
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF();
@@ -436,6 +443,8 @@ const generarReporteIngresosMensuales = () => {
 
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save('ReporteIngresosMensuales.pdf');
+  }).catch((error) => {
+    console.error('Error al generar el PDF:', error);
   });
 };
 
@@ -705,58 +714,50 @@ const generarReporteVentasProducto = async () => {
 //Top 5 productos mas vendidos
 // Obtener datos del top 5 productos más vendidos
 useEffect(() => {
-  const obtenerTop5MasVendidos = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/estadisticas/top5masvendidos');
-      const data = await response.json();
-      setTop5MasVendidos(data);
-    } catch (error) {
-      console.error('Error al obtener el top 5 productos más vendidos:', error);
-    }
-  };
-
-  obtenerTop5MasVendidos();
+  fetch('http://localhost:5000/top5masvendido')
+    .then((response) => response.json())
+    .then((data) => setTop5MasVendidos(data))
+    .catch((error) => console.error('Error al obtener los top 5 productos más vendidos:', error));
 }, []);
 
 // Generar gráfico de top 5 productos más vendidos
 useEffect(() => {
   if (top5MasVendidos.length > 0) {
-    const ctx = document.getElementById('top5Chart').getContext('2d');
-    if (myChart6) {
-      myChart6.destroy();
-    }
-    const nombresProductos = top5MasVendidos.map(producto => producto.nombreProducto);
-    const ventas = top5MasVendidos.map(producto => producto.cantidadVendida);
+    const ctx = document.getElementById('myChart5');
 
-    const dynamicColors = nombresProductos.map(() => {
-      const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.5)`;
-      return randomColor;
-    });
+    if (ctx) {
+      if (myChart6 !== null) {
+        myChart6.destroy();
+      }
 
-    const top5Chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: nombresProductos,
-        datasets: [{
-          label: 'Cantidad Vendida',
-          data: ventas,
-          backgroundColor: dynamicColors,
-          borderColor: dynamicColors.map(color => color.replace('0.5', '1')),
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
+      const nombresProductos = productos.map((producto) => producto.nombreProducto);
+      const cantidadesVendidas = productos.map((producto) => producto.Cantidad_Total_Vendida);
+
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: nombresProductos,
+          datasets: [{
+            label: 'Cantidad total vendidad',
+            data: cantidadesVendidas,
+            backgroundColor: 'rgba(27, 35,150, 0.843)',
+            borderColor: 'rgba(37, 35, 150, 0)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
           }
         }
-      }
-    });
+      });
 
-    setMyChart6(top5Chart);
+      setMyChart6(chart);
+    }
   }
-}, [top5MasVendidos]);
+}, [productos]);
 
 //Envio de correo top 5 productos mas vendidos
 const formatearTop5 = (top5masvendido) => {
@@ -803,7 +804,7 @@ const excelTop5 = () => {
 // Generar reporte en PDF del top 5 productos más vendidos
 const generarReporteTop5MasVendidos = async () => {
   try {
-    const canvas = document.getElementById('top5Chart');
+    const canvas = document.getElementById('myChart6');
     const imgData = canvas.toDataURL('image/png');
 
     const pdf = new jsPDF();
@@ -823,6 +824,7 @@ const generarReporteTop5MasVendidos = async () => {
     console.error('Error al generar el reporte de Top 5 productos más vendidos:', error);
   }
 };
+
 
 
 
@@ -880,7 +882,7 @@ const generarReporteTop5MasVendidos = async () => {
         <Card>
           <Card.Body>
             <Card.Title>Ingresos Mensuales</Card.Title>
-            <canvas id="revenueChart" height="120"></canvas>
+            <canvas id="myRevenues" height="120"></canvas>
           <Button onClick={generarReporteIngresosMensuales} className="m-3 mb-3">
             <FaRegFilePdf style={{ color: 'white' }}/>
             </Button>
