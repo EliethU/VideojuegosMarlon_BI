@@ -34,7 +34,7 @@ CREATE TABLE Producto(
     id_categoria INT NOT NULL,
     descripcion VARCHAR(100) NOT NULL,
     nombreProducto VARCHAR(30) NOT NULL,
-    precio FLOAT NOT NULL,
+    precio DECIMAL(8,2) NOT NULL,
     Stock INT NOT NULL,
     imagen LONGTEXT,
     FOREIGN KEY (id_categoria) REFERENCES Categoria (id_categoria),

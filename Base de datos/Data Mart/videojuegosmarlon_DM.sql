@@ -26,7 +26,7 @@ CREATE TABLE Dim_Cliente (
 CREATE TABLE Dim_Producto (
   id_producto INT PRIMARY KEY,
   nombreProducto VARCHAR(30),
-  precio INT,
+  precio DECIMAL (8,2),
   Categoria VARCHAR (30),
   descripcion VARCHAR(100),
   Stock INT
@@ -40,8 +40,8 @@ CREATE TABLE Hechos_Ventas (
   id_cliente INT,
   fecha DATE,
   cantidad INT,
-  precio_unitario INT,
-  total_venta INT,
+  precio_unitario DECIMAL (8,2),
+  total_venta DECIMAL (8,2),
   FOREIGN KEY (id_tiempo) REFERENCES Dim_Tiempo(id_tiempo),
   FOREIGN KEY (id_producto) REFERENCES Dim_Producto(id_producto),
   FOREIGN KEY (id_cliente) REFERENCES Dim_Cliente(id_cliente)

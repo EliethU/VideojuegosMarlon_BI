@@ -20,7 +20,7 @@
     <database>videojuegosmarlon_DM</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb79ce108cc0fe8b</password>
+    <password>Encrypted 2be98afc86aa7f289b20abf7c8cc2fd89</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -379,7 +379,7 @@
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>C:/Users/Osmen Espinoza/Desktop/repositorio2.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_cliente.ktr</filename>
+      <filename>C:/Users/SANDRA DIAZ/Desktop/clon 3.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_cliente.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -418,7 +418,7 @@
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>C:/Users/Osmen Espinoza/Desktop/repositorio2.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_producto.ktr</filename>
+      <filename>C:/Users/SANDRA DIAZ/Desktop/clon 3.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_producto.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -457,7 +457,7 @@
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>C:/Users/Osmen Espinoza/Desktop/repositorio2.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_fecha.ktr</filename>
+      <filename>C:/Users/SANDRA DIAZ/Desktop/clon 3.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_fecha.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -496,7 +496,7 @@
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>C:/Users/Osmen Espinoza/Desktop/repositorio2.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_detalle.ktr</filename>
+      <filename>C:/Users/SANDRA DIAZ/Desktop/clon 3.0/VideojuegosMarlon_BI/Base de datos/ETL_VideojuegosMarlon/extraccion_detalle.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>

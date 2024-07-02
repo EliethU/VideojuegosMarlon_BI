@@ -11,6 +11,7 @@ import { FaRegFilePdf } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import 'jspdf-autotable';
 
+
 export function Reportes({ Rol }) {
   // Estados para manejar los datos y las instancias de los gráficos
   const [productos, setProductos] = useState([]);
@@ -29,34 +30,6 @@ export function Reportes({ Rol }) {
   const [myChart6, setMyChart6] = useState(null);
 
   //Estado de almacen
-  const formatearEstadoAlmacen = (productos) => {
-    return productos.map(producto => {
-      return `Nombre: ${producto.nombreProducto}\nCantidad: ${producto.Stock}`;
-    }).join('\n\n');
-  };
-
-  const enviarCorreo = () => {
-    // Formateo de datos
-    const EstadoAlmacenFormateado = formatearEstadoAlmacen(productos);
-
-    // Datos de ejemplo (reemplaza con tus datos reales)
-    const data = {
-      to_name: 'Josnel',
-      user_email: 'josnellopezdiaz@gmail.com',
-      message: EstadoAlmacenFormateado,
-    };
-
-    // Envía el correo utilizando EmailJS
-    emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
-      .then((response) => {
-        alert('Correo enviado.');
-        console.log('Correo enviado.', response);
-      })
-      .catch((error) => {
-        alert('Error al enviar el correo.');
-        console.error('Error al enviar el correo:', error);
-      });
-  };
 
   // Obtener los productos desde la API
   useEffect(() => {
@@ -66,8 +39,8 @@ export function Reportes({ Rol }) {
       .catch((error) => console.error('Error al obtener los productos:', error));
   }, []);
 
-  // Crear el gráfico de barras para el estado del almacén
-  useEffect(() => {
+   // Crear el gráfico de barras para el estado del almacén
+   useEffect(() => {
     if (productos.length > 0) {
       const ctx = document.getElementById('myChart');
 
@@ -110,6 +83,36 @@ export function Reportes({ Rol }) {
     }
   }, [productos]);
 
+  //Formatear estado de almace completo
+  const formatearEstadoAlmacen = (productos) => {
+    return productos.map(producto => {
+      return `Nombre: ${producto.nombreProducto}\nCantidad: ${producto.Stock}`;
+    }).join('\n\n');
+  };
+
+  const enviarCorreo = () => {
+    // Formateo de datos
+    const EstadoAlmacenFormateado = formatearEstadoAlmacen(productos);
+
+    // Datos de ejemplo (reemplaza con tus datos reales)
+    const data = {
+      to_name: 'Josnel',
+      user_email: 'josnellopezdiaz@gmail.com',
+      message: EstadoAlmacenFormateado,
+    };
+
+    // Envía el correo utilizando EmailJS
+    emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
+      .then((response) => {
+        alert('Correo enviado.');
+        console.log('Correo enviado.', response);
+      })
+      .catch((error) => {
+        alert('Error al enviar el correo.');
+        console.error('Error al enviar el correo:', error);
+      });
+  };
+
   useEffect(() => {
     fetch('http://localhost:5000/estadisticas/estadoalmacen')
       .then((response) => response.json())
@@ -117,7 +120,7 @@ export function Reportes({ Rol }) {
       .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
   }, []);
 
-  //Excel
+  //Exportacion de excel almacen completo
   const excelAlmacenCompleto = () => {
     console.log(estadoAlmacen);
     // Convertir los datos JSON a una hoja de trabajo de Excel
@@ -129,7 +132,7 @@ export function Reportes({ Rol }) {
     XLSX.writeFile(workbook, 'AlmacenCompleto.xlsx');
   };
 
-   // Generar reporte en PDF del reporte completo
+   // Generar reporte en PDF del reporte de estado completo
   const generarReporteCompleto = async () => {
     try {
       const response = await fetch('http://localhost:5000/crud/readproducto');
@@ -170,6 +173,71 @@ export function Reportes({ Rol }) {
     }
   };
 
+  // Obtener los productos por categoría
+  useEffect(() => {
+    fetch('http://localhost:5000/crud/productosPorCategoria')
+      .then((response) => response.json())
+      .then((data) => setProductosPorCategoria(data))
+      .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
+  }, []);
+
+    // Crear el gráfico de pastel para productos por categoría
+    useEffect(() => {
+      if (productosPorCategoria.length > 0) {
+        const ctx = document.getElementById('myCategories');
+  
+        if (ctx) {
+          if (categoryChart !== null) {
+            categoryChart.destroy();
+          }
+  
+          const labels = productosPorCategoria.map((Categoria) => Categoria.nombre);
+          const data = productosPorCategoria.map((Categoria) => Categoria.cantidadproducto);
+  
+          const categorias = new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Cantidad de productos por categoria',
+                data: data,
+                backgroundColor: [
+                  'rgba(255,99,132,0.5)',
+                  'rgba(54,162,235,0.5)',
+                  'rgba(255,206,86,0.5)',
+                  'rgba(75,192,192,0.5)',
+                  'rgba(153,102,255,0.5)',
+                  'rgba(255,159,64,0.5)'
+                ],
+                borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54,162,235,1)',
+                  'rgba(255,206,86,1)',
+                  'rgba(75,192,192,1)',
+                  'rgba(153,102,255,1)',
+                  'rgba(255,159,64,1)'
+                ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Cantidad de productos por categoría'
+                }
+              }
+            }
+          });
+          setCategoryChart(categorias);
+        }
+      }
+    }, [productosPorCategoria]);
+
   //Correo para Grafico de pastel de los productos por categoria
   const formatearProductosCategoria = (productosPorCategoria) => {
     return productosPorCategoria.map((productosPorCategoria) => {
@@ -199,71 +267,6 @@ export function Reportes({ Rol }) {
         console.error('Error al enviar el correo:', error);
       });
   };
-
-  // Obtener los productos por categoría
-  useEffect(() => {
-    fetch('http://localhost:5000/crud/productosPorCategoria')
-      .then((response) => response.json())
-      .then((data) => setProductosPorCategoria(data))
-      .catch((error) => console.error('Error al obtener los productos por categorìa:', error));
-  }, []);
-
-  // Crear el gráfico de pastel para productos por categoría
-  useEffect(() => {
-    if (productosPorCategoria.length > 0) {
-      const ctx = document.getElementById('myCategories');
-
-      if (ctx) {
-        if (categoryChart !== null) {
-          categoryChart.destroy();
-        }
-
-        const labels = productosPorCategoria.map((Categoria) => Categoria.nombre);
-        const data = productosPorCategoria.map((Categoria) => Categoria.cantidadproducto);
-
-        const categorias = new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Cantidad de productos por categoria',
-              data: data,
-              backgroundColor: [
-                'rgba(255,99,132,0.5)',
-                'rgba(54,162,235,0.5)',
-                'rgba(255,206,86,0.5)',
-                'rgba(75,192,192,0.5)',
-                'rgba(153,102,255,0.5)',
-                'rgba(255,159,64,0.5)'
-              ],
-              borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54,162,235,1)',
-                'rgba(255,206,86,1)',
-                'rgba(75,192,192,1)',
-                'rgba(153,102,255,1)',
-                'rgba(255,159,64,1)'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                position: 'top',
-              },
-              title: {
-                display: true,
-                text: 'Cantidad de productos por categoría'
-              }
-            }
-          }
-        });
-        setCategoryChart(categorias);
-      }
-    }
-  }, [productosPorCategoria]);
 
   //Excel
   const excelProductosCategoria = () => {
@@ -327,34 +330,6 @@ export function Reportes({ Rol }) {
   };
 
   // Ingresos Totales
-  const formatearIngresosMensuales = (ingresostotalesmensuales) => {
-    return ingresostotalesmensuales.map((ingreso) => {
-      return `Ingresos: ${ingreso.IngresosTotales}\nMes: ${ingreso.Mes}`;
-    }).join('\n\n');
-  };
-
-  const enviarCorreo2 = () => {
-    // Formateo de datos
-    const ingresosTotalesMensualesFormateados = formatearIngresosMensuales(ingresostotalesmensuales);
-
-    // Datos de ejemplo (reemplaza con tus datos reales)
-    const data = {
-      to_name: 'Josnel',
-      user_email: 'josnellopezdiaz@gmail.com',
-      message: ingresosTotalesMensualesFormateados,
-    };
-
-    // Envía el correo utilizando EmailJS
-    emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
-      .then((response) => {
-        alert('Correo enviado.');
-        console.log('Correo enviado.', response);
-      })
-      .catch((error) => {
-        alert('Error al enviar el correo.');
-        console.error('Error al enviar el correo:', error);
-      });
-  };
 
   // Obtener los ingresos totales mensuales desde la API
   useEffect(() => {
@@ -406,6 +381,36 @@ export function Reportes({ Rol }) {
     }
   }, [ingresostotalesmensuales]);
 
+  //Correo para los ingresos mensuales
+  const formatearIngresosMensuales = (ingresostotalesmensuales) => {
+    return ingresostotalesmensuales.map((ingreso) => {
+      return `Ingresos: ${ingreso.IngresosTotales}\nMes: ${ingreso.Mes}`;
+    }).join('\n\n');
+  };
+
+  const enviarCorreo2 = () => {
+    // Formateo de datos
+    const ingresosTotalesMensualesFormateados = formatearIngresosMensuales(ingresostotalesmensuales);
+
+    // Datos de ejemplo (reemplaza con tus datos reales)
+    const data = {
+      to_name: 'Josnel',
+      user_email: 'josnellopezdiaz@gmail.com',
+      message: ingresosTotalesMensualesFormateados,
+    };
+
+    // Envía el correo utilizando EmailJS
+    emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
+      .then((response) => {
+        alert('Correo enviado.');
+        console.log('Correo enviado.', response);
+      })
+      .catch((error) => {
+        alert('Error al enviar el correo.');
+        console.error('Error al enviar el correo:', error);
+      });
+  };
+
    //Excel
   const excelIngresosMensuales = () => {
     console.log(ingresostotalesmensuales);
@@ -433,7 +438,6 @@ const generarReporteIngresosMensuales = () => {
     pdf.save('ReporteIngresosMensuales.pdf');
   });
 };
-
 
 //Ventas por año
 useEffect(() => {
@@ -482,6 +486,48 @@ useEffect(() => {
   }
 }, [ventasPorAnyo]);
 
+//Envio de correo para las ventas por año
+const formatearVentasAño = (ventasPorAnyo) => {
+  return ventasPorAnyo.map((venta) => {
+    return `Cantidad: ${venta.Ventas_totales}\nAño: ${venta.Anyo}`;
+  }).join('\n\n');
+};
+
+const enviarCorreo3 = () => {
+  // Formateo de datos
+  const VentasPorAnyoFormateados = formatearVentasAño(ventasPorAnyo);
+
+  // Datos de ejemplo (reemplaza con tus datos reales)
+  const data = {
+    to_name: 'Josnel',
+    user_email: 'josnellopezdiaz@gmail.com',
+    message: VentasPorAnyoFormateados,
+  };
+
+  // Envía el correo utilizando EmailJS
+  emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
+    .then((response) => {
+      alert('Correo enviado.');
+      console.log('Correo enviado.', response);
+    })
+    .catch((error) => {
+      alert('Error al enviar el correo.');
+      console.error('Error al enviar el correo:', error);
+    });
+};
+
+//Excel de las ventas por año
+const excelVentasAnyo = () => {
+  console.log(ventasPorAnyo);
+  // Convertir los datos JSON a una hoja de trabajo de Excel
+  const worksheet = XLSX.utils.json_to_sheet(ventasPorAnyo);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Ventas por año');
+
+  // Generar y descargar el archivo Excel
+  XLSX.writeFile(workbook, 'VentasAño.xlsx');
+};
+
 // Generar reporte en PDF del gráfico de ventas por año
 const generarReporteVentasAnyo = async () => {
   try {
@@ -524,7 +570,6 @@ const generarReporteVentasAnyo = async () => {
   }
 };
 
-
 //Ventas por productos
 // Obtener las ventas totales por producto desde la API
 useEffect(() => {
@@ -540,8 +585,8 @@ useEffect(() => {
     const ctx = document.getElementById('myChart5');
 
     if (ctx) { // Verifica si el elemento existe en el DOM
-      if (myChart4 !== null) {
-        myChart4.destroy();
+      if (myChart5 !== null) {
+        myChart5.destroy();
       }
 
       const anyos = ventasPorProducto.map((venta) => venta.nombreProducto);
@@ -572,6 +617,48 @@ useEffect(() => {
     }
   }
 }, [ventasPorProducto]);
+
+//Envio de correo para las ventas por producto
+const formatearVentasProducto = (ventasPorProducto) => {
+  return ventasPorProducto.map((venta) => {
+    return `Cantidad: ${venta.Ventas_totales}\nProducto: ${venta.nombreProducto}`;
+  }).join('\n\n');
+};
+
+const enviarCorreo4 = () => {
+  // Formateo de datos
+  const VentasPorProductoFormateados = formatearVentasProducto(ventasPorProducto);
+
+  // Datos de ejemplo (reemplaza con tus datos reales)
+  const data = {
+    to_name: 'Josnel',
+    user_email: 'josnellopezdiaz@gmail.com',
+    message: VentasPorProductoFormateados,
+  };
+
+  // Envía el correo utilizando EmailJS
+  emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
+    .then((response) => {
+      alert('Correo enviado.');
+      console.log('Correo enviado.', response);
+    })
+    .catch((error) => {
+      alert('Error al enviar el correo.');
+      console.error('Error al enviar el correo:', error);
+    });
+};
+
+//Excel de las ventas por año
+const excelVentasProducto = () => {
+  console.log(ventasPorProducto);
+  // Convertir los datos JSON a una hoja de trabajo de Excel
+  const worksheet = XLSX.utils.json_to_sheet(ventasPorProducto);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Ventas por producto');
+
+  // Generar y descargar el archivo Excel
+  XLSX.writeFile(workbook, 'VentasProducto.xlsx');
+};
 
 // Generar reporte en PDF del gráfico de ventas por producto
 const generarReporteVentasProducto = async () => {
@@ -614,7 +701,6 @@ const generarReporteVentasProducto = async () => {
     console.error('Error al generar el reporte de ventas por producto:', error);
   }
 };
-
 
 //Top 5 productos mas vendidos
 // Obtener datos del top 5 productos más vendidos
@@ -672,6 +758,48 @@ useEffect(() => {
   }
 }, [top5MasVendidos]);
 
+//Envio de correo top 5 productos mas vendidos
+const formatearTop5 = (top5masvendido) => {
+  return top5masvendido.map((producto) => {
+    return `Cantidad vendida: ${producto.Cantidad_Total_Vendida}\nProducto: ${producto.nombreProducto}`;
+  }).join('\n\n');
+};
+
+const enviarCorreo5 = () => {
+  // Formateo de datos
+  const Top5Formateados = formatearTop5(productos);
+
+  // Datos de ejemplo (reemplaza con tus datos reales)
+  const data = {
+    to_name: 'Josnel',
+    user_email: 'josnellopezdiaz@gmail.com',
+    message: Top5Formateados,
+  };
+
+  // Envía el correo utilizando EmailJS
+  emailjs.send('service_olge9ps', 'template_akdp4y6', data, 'nqxpxkx25L-0-cuBT')
+    .then((response) => {
+      alert('Correo enviado.');
+      console.log('Correo enviado.', response);
+    })
+    .catch((error) => {
+      alert('Error al enviar el correo.');
+      console.error('Error al enviar el correo:', error);
+    });
+};
+
+//Excel del top 5 productos mas vendidos
+const excelTop5 = () => {
+  console.log(productos);
+  // Convertir los datos JSON a una hoja de trabajo de Excel
+  const worksheet = XLSX.utils.json_to_sheet(productos);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Top 5 mas vendido');
+
+  // Generar y descargar el archivo Excel
+  XLSX.writeFile(workbook, 'Top5.xlsx');
+};
+
 // Generar reporte en PDF del top 5 productos más vendidos
 const generarReporteTop5MasVendidos = async () => {
   try {
@@ -716,7 +844,7 @@ const generarReporteTop5MasVendidos = async () => {
           <Card>
             <Card.Body>
               <Card.Title>Estado del almacén</Card.Title>
-              <canvas id="myChart" height="300"></canvas>
+              <canvas id="myChart" height="120"></canvas>
               <Button onClick={generarReporteCompleto} className="m-3 mb-3">
               <FaRegFilePdf style={{ color: 'white' }}/>
               </Button>
@@ -752,7 +880,7 @@ const generarReporteTop5MasVendidos = async () => {
         <Card>
           <Card.Body>
             <Card.Title>Ingresos Mensuales</Card.Title>
-            <canvas id="revenueChart" height="300"></canvas>
+            <canvas id="revenueChart" height="120"></canvas>
           <Button onClick={generarReporteIngresosMensuales} className="m-3 mb-3">
             <FaRegFilePdf style={{ color: 'white' }}/>
             </Button>
@@ -773,9 +901,15 @@ const generarReporteTop5MasVendidos = async () => {
               <canvas id="myChart4"  height="120"></canvas>
             </Card.Body>
             <Card.Body>
-              <Button onClick={generarReporteVentasAnyo} variant="danger">
-                  <FaRegFilePdf style={{ color: 'white' }}/>
-              </Button>                        
+            <Button onClick={generarReporteVentasAnyo} className="m-3 mb-3">
+            <FaRegFilePdf style={{ color: 'white' }}/>
+            </Button> 
+              <Button variant="secondary" onClick={enviarCorreo3} className="mt-3 mb-3">
+              <SiGmail style={{ color: 'white' }} />
+              </Button> 
+              <Button variant="success" onClick={excelVentasAnyo} className="m-3">
+              <FaFileExcel style={{ color: 'white' }} />
+          </Button>                      
             </Card.Body>
           </Card>
         </Col>
@@ -787,9 +921,15 @@ const generarReporteTop5MasVendidos = async () => {
               <canvas id="myChart5"  height="120"></canvas>
             </Card.Body>
             <Card.Body>
-              <Button onClick={generarReporteVentasProducto} variant="danger">
-                  <FaRegFilePdf style={{ color: 'white' }}/>
-              </Button>                        
+            <Button onClick={generarReporteVentasProducto} className="m-3 mb-3">
+            <FaRegFilePdf style={{ color: 'white' }}/>
+            </Button> 
+              <Button variant="secondary" onClick={enviarCorreo4} className="mt-3 mb-3">
+              <SiGmail style={{ color: 'white' }} />
+              </Button>  
+              <Button variant="success" onClick={excelVentasProducto} className="m-3">
+              <FaFileExcel style={{ color: 'white' }} />
+          </Button>                      
             </Card.Body>
           </Card>
         </Col>
@@ -801,9 +941,15 @@ const generarReporteTop5MasVendidos = async () => {
               <canvas id="myChart6"  height="120"></canvas>
             </Card.Body>
             <Card.Body>
-              <Button onClick={generarReporteTop5MasVendidos} variant="danger">
-                  <FaRegFilePdf style={{ color: 'white' }}/>
-              </Button>                        
+            <Button onClick={generarReporteTop5MasVendidos} className="m-3 mb-3">
+            <FaRegFilePdf style={{ color: 'white' }}/>
+            </Button> 
+              <Button variant="secondary" onClick={enviarCorreo5} className="mt-3 mb-3">
+              <SiGmail style={{ color: 'white' }} />
+              </Button> 
+              <Button variant="success" onClick={excelTop5} className="m-3">
+              <FaFileExcel style={{ color: 'white' }} />
+          </Button>                      
             </Card.Body>
           </Card>
         </Col>

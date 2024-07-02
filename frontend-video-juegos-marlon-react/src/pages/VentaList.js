@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Card, Modal, Container } from 'react-bootstrap';
+import { Table, Button, Card, Modal, Container, Form } from 'react-bootstrap';
 import Header from '../components/Header';
-import { FaTrashCan, FaFileLines } from 'react-icons/fa6';
+import { FaFileLines } from 'react-icons/fa6';
 
 function VentaList({ Rol }) {
   const [ventas, setVentas] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedVenta, setSelectedVenta] = useState({});
   const [detalleVenta, setDetalleVenta] = useState([]);
+  const [filtroNombreCliente, setFiltroNombreCliente] = useState('');
+  const [ventasFiltradas, setVentasFiltradas] = useState([]);
 
   const openModal = (venta) => {
     setSelectedVenta(venta);
@@ -18,7 +20,10 @@ function VentaList({ Rol }) {
   const loadVentas = () => {
     fetch('http://localhost:5000/crud/readVenta')
       .then((response) => response.json())
-      .then((data) => setVentas(data))
+      .then((data) => {
+        setVentas(data);
+        setVentasFiltradas(data); // Inicialmente mostramos todas las ventas
+      })
       .catch((error) => console.error('Error al obtener las ventas:', error));
   };
 
@@ -29,24 +34,17 @@ function VentaList({ Rol }) {
       .catch((error) => console.error('Error al obtener los detalles de la venta:', error));
   };
 
-  const handleDelete = (id_venta) => {
-    const confirmation = window.confirm('¿Seguro que deseas eliminar esta venta?');
-    if (confirmation) {
-      fetch(`http://localhost:5000/crud/deleteVenta/${id_venta}`, {
-        method: 'DELETE',
-      })
-        .then((response) => {
-          if (response.ok) {
-            loadVentas();
-          }
-        })
-        .catch((error) => console.error('Error al eliminar la venta:', error));
-    }
-  };
-
   useEffect(() => {
     loadVentas();
   }, []);
+
+  useEffect(() => {
+    // Filtrar las ventas cuando cambie el filtro por nombre de cliente
+    const filteredVentas = ventas.filter(venta =>
+      venta.nombreCliente.toLowerCase().includes(filtroNombreCliente.toLowerCase())
+    );
+    setVentasFiltradas(filteredVentas);
+  }, [filtroNombreCliente, ventas]);
 
   function formatDateForInput(dateTimeString) {
     const date = new Date(dateTimeString);
@@ -56,6 +54,10 @@ function VentaList({ Rol }) {
     return `${year}-${month}-${day}`;
   }
 
+  const handleInputChange = (event) => {
+    setFiltroNombreCliente(event.target.value);
+  };
+
   return (
     <div>
       <Header Rol={Rol} />
@@ -64,6 +66,17 @@ function VentaList({ Rol }) {
         <Card className="margen-contenedor">
           <Card.Body>
             <Card.Title className="mb-3">Listado de Ventas</Card.Title>
+
+            {/* Agregar campo de búsqueda por nombre de cliente */}
+            <Form.Group controlId="formNombreCliente">
+              <Form.Label>Buscar por Nombre de Cliente</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Nombre del cliente"
+                value={filtroNombreCliente}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
 
             <Table striped bordered hover>
               <thead>
@@ -75,7 +88,7 @@ function VentaList({ Rol }) {
                 </tr>
               </thead>
               <tbody>
-                {ventas.map((venta) => (
+                {ventasFiltradas.map((venta) => (
                   <tr key={venta.id_venta}>
                     <td>{venta.id_venta}</td>
                     <td>{venta.nombreCliente}</td>
@@ -88,12 +101,7 @@ function VentaList({ Rol }) {
                       >
                         <FaFileLines />
                       </Button>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleDelete(venta.id_venta)}
-                      >
-                        <FaTrashCan />
-                      </Button>
+                      {/* Aquí se elimina el botón de eliminar */}
                     </td>
                   </tr>
                 ))}
@@ -113,28 +121,28 @@ function VentaList({ Rol }) {
               <Card.Title>ID: {selectedVenta.id_venta}</Card.Title>
               <p>Cliente: {selectedVenta.nombreCliente}</p>
               <p>Fecha: {formatDateForInput(selectedVenta.fecha)}</p>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>ID Detalle</th>
-                      <th>Producto</th>
-                      <th>Precio</th>
-                      <th>Cantidad</th>
-                      <th>Subtotal</th>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>ID Detalle</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {detalleVenta.map((detalle) => (
+                    <tr key={detalle.id_detalle}>
+                      <td>{detalle.id_detalle}</td>
+                      <td>{detalle.nombreProducto}</td>
+                      <td>{detalle.precio}</td>
+                      <td>{detalle.cantidad}</td>
+                      <td>{detalle.cantidad * detalle.precio}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {detalleVenta.map((detalle) => (
-                      <tr key={detalle.id_detalle}>
-                        <td>{detalle.id_detalle}</td>
-                        <td>{detalle.nombreProducto}</td>
-                        <td>{detalle.precio}</td>
-                        <td>{detalle.cantidad}</td>
-                        <td>{detalle.cantidad * detalle.precio}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                  ))}
+                </tbody>
+              </Table>
             </Card.Body>
           </Card>
         </Modal.Body>

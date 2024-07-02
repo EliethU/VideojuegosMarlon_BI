@@ -443,7 +443,7 @@
     <database>BDVideojuegosMarlon</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb79ce108cc0fe8b</password>
+    <password>Encrypted 2be98afc86aa7f289b20abf7c8cc2fd89</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -590,13 +590,13 @@ GROUP BY
         <type>String</type>
         <storagetype>normal</storagetype>
         <name>ID_Tiempo</name>
-        <length>8</length>
+        <length>9</length>
         <precision>-1</precision>
         <origin>extraccion_fecha</origin>
         <comments>ID_Tiempo</comments>
         <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -605,8 +605,8 @@ GROUP BY
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -618,8 +618,8 @@ GROUP BY
         <origin>extraccion_fecha</origin>
         <comments>Fecha</comments>
         <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -628,21 +628,21 @@ GROUP BY
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
-        <type>Date</type>
+        <type>Integer</type>
         <storagetype>normal</storagetype>
         <name>Anyo</name>
-        <length>-1</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <origin>extraccion_fecha</origin>
         <comments>Anyo</comments>
-        <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -651,8 +651,8 @@ GROUP BY
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -664,8 +664,8 @@ GROUP BY
         <origin>extraccion_fecha</origin>
         <comments>Mes</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -674,8 +674,8 @@ GROUP BY
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -687,8 +687,8 @@ GROUP BY
         <origin>extraccion_fecha</origin>
         <comments>Dia</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -697,8 +697,8 @@ GROUP BY
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
@@ -710,8 +710,8 @@ GROUP BY
         <origin>extraccion_fecha</origin>
         <comments>Semestre</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -720,8 +720,8 @@ GROUP BY
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_NI</date_format_locale>
-        <date_format_timezone>America/Managua</date_format_timezone>
+        <date_format_locale>es_ES</date_format_locale>
+        <date_format_timezone>America/Guatemala</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
     </row-meta>

@@ -195,3 +195,4 @@ INSERT INTO detalle (id_venta, id_producto, cantidad) VALUES
 
 SELECT * FROM Venta;
 SELECT * FROM Detalle;
+
